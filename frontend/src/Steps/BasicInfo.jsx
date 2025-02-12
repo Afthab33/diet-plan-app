@@ -7,7 +7,10 @@ const BasicInfo = ({
   handleInputChange, 
   weightUnit, 
   setWeightUnit, 
-  convertWeight 
+  convertWeight,
+  heightUnit,
+  setHeightUnit,
+  convertHeight
 }) => {
   return (
     <div className="space-y-6">
@@ -113,7 +116,6 @@ const BasicInfo = ({
       </div>
 
       {/* Weight Input */}
-      {/* Weight Input */}
 <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 p-6 backdrop-blur-xl border border-gray-700/50">
   <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-green-500/10 opacity-0 group-hover:opacity-100 transition-all duration-500" />
   
@@ -195,73 +197,130 @@ const BasicInfo = ({
     </div>
 
     {/* Height Input */}
-    <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 p-6 backdrop-blur-xl border border-gray-700/50">
-      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-all duration-500" />
-      
-      <div className="relative z-10 space-y-4">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 rounded-lg bg-cyan-500/20">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7l4-4m0 0l4 4m-4-4v18" />
-            </svg>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-200">Height</label>
-            <p className="text-xs text-gray-400">Enter your height in feet and inches</p>
-          </div>
+    {/* Height Input */}
+<div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 p-6 backdrop-blur-xl border border-gray-700/50">
+  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-all duration-500" />
+  
+  <div className="relative z-10 space-y-4">
+    <div className="flex items-center justify-between">
+      <div className="flex items-center space-x-3">
+        <div className="p-2 rounded-lg bg-cyan-500/20">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7l4-4m0 0l4 4m-4-4v18" />
+          </svg>
         </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          {/* Feet Input */}
-          <div className="space-y-2">
-            <input
-              type="number"
-              value={formData.height_feet}
-              onChange={(e) => handleInputChange('height_feet', e.target.value)}
-              placeholder="Feet"
-              min="3"
-              max="8"
-              className={`
-                w-full px-4 py-3 rounded-xl bg-gray-700/50 border-2 
-                focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent 
-                text-gray-100 transition-all duration-300
-                ${fieldErrors.height_feet ? 'border-red-500 animate-shake' : 'border-gray-600'}
-              `}
-            />
-            <div className="flex justify-between text-xs">
-              <span className="text-gray-400">Range: 3-8 feet</span>
-              {fieldErrors.height_feet && (
-                <span className="text-red-400">{fieldErrors.height_feet}</span>
-              )}
-            </div>
-          </div>
-
-          {/* Inches Input */}
-          <div className="space-y-2">
-            <input
-              type="number"
-              value={formData.height_inches}
-              onChange={(e) => handleInputChange('height_inches', e.target.value)}
-              placeholder="Inches"
-              min="0"
-              max="11"
-              className={`
-                w-full px-4 py-3 rounded-xl bg-gray-700/50 border-2 
-                focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent 
-                text-gray-100 transition-all duration-300
-                ${fieldErrors.height_inches ? 'border-red-500 animate-shake' : 'border-gray-600'}
-              `}
-            />
-            <div className="flex justify-between text-xs">
-              <span className="text-gray-400">Range: 0-11 inches</span>
-              {fieldErrors.height_inches && (
-                <span className="text-red-400">{fieldErrors.height_inches}</span>
-              )}
-            </div>
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-200">Height</label>
+          <p className="text-xs text-gray-400">Enter your height</p>
         </div>
       </div>
+
+      {/* Unit Toggle */}
+      <div className="flex items-center bg-gray-700/50 rounded-lg p-1">
+        {[
+          { value: 'ft', label: 'FT' },
+          { value: 'cm', label: 'CM' }
+        ].map((unit) => (
+          <button
+            key={unit.value}
+            onClick={() => {
+              if (heightUnit === 'ft' && unit.value === 'cm' && formData.height_feet) {
+                const cm = convertHeight.feetToCm(formData.height_feet, formData.height_inches);
+                handleInputChange('height_cm', cm.toString());
+              } else if (heightUnit === 'cm' && unit.value === 'ft' && formData.height_cm) {
+                const { feet, inches } = convertHeight.cmToFeet(formData.height_cm);
+                handleInputChange('height_feet', feet.toString());
+                handleInputChange('height_inches', inches.toString());
+              }
+              setHeightUnit(unit.value);
+            }}
+            className={`
+              px-3 py-1 rounded-md text-sm font-medium transition-all duration-300
+              ${heightUnit === unit.value 
+                ? 'bg-cyan-500/20 text-cyan-400' 
+                : 'text-gray-400 hover:text-white'}
+            `}
+          >
+            {unit.label}
+          </button>
+        ))}
+      </div>
     </div>
+
+    {heightUnit === 'ft' ? (
+      <div className="grid grid-cols-2 gap-4">
+      {/* Feet Input */}
+      <div className="space-y-2">
+        <input
+          type="number"
+          value={formData.height_feet}
+          onChange={(e) => handleInputChange('height_feet', e.target.value)}
+          placeholder="Feet"
+          min="3"
+          max="8"
+          className={`
+            w-full px-4 py-3 rounded-xl bg-gray-700/50 border-2 
+            focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent 
+            text-gray-100 transition-all duration-300
+            ${fieldErrors.height_feet ? 'border-red-500 animate-shake' : 'border-gray-600'}
+          `}
+        />
+        {fieldErrors.height_feet && (
+          <span className="text-xs text-red-400">{fieldErrors.height_feet}</span>
+        )}
+      </div>
+
+      {/* Inches Input */}
+      <div className="space-y-2">
+        <input
+          type="number"
+          value={formData.height_inches}
+          onChange={(e) => handleInputChange('height_inches', e.target.value)}
+          placeholder="Inches"
+          min="0"
+          max="11"
+          className={`
+            w-full px-4 py-3 rounded-xl bg-gray-700/50 border-2 
+            focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent 
+            text-gray-100 transition-all duration-300
+            ${fieldErrors.height_inches ? 'border-red-500 animate-shake' : 'border-gray-600'}
+          `}
+        />
+        {fieldErrors.height_inches && (
+          <span className="text-xs text-red-400">{fieldErrors.height_inches}</span>
+        )}
+      </div>
+
+      <div className="col-span-2 flex justify-between text-xs text-gray-400">
+        <span>Range: 3'0" - 8'11"</span>
+      </div>
+    </div>
+    ) : (
+      <div className="space-y-2">
+        <input
+          type="number"
+          value={formData.height_cm}
+          onChange={(e) => handleInputChange('height_cm', e.target.value)}
+          placeholder="Enter height in cm"
+          min="91"  // 3 feet in cm
+          max="243" // 8 feet in cm
+          className={`
+            w-full px-4 py-3 rounded-xl bg-gray-700/50 border-2 
+            focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent 
+            text-gray-100 transition-all duration-300
+            ${fieldErrors.height_cm ? 'border-red-500 animate-shake' : 'border-gray-600'}
+          `}
+        />
+        <div className="flex justify-between text-xs">
+          <span className="text-gray-400">Range: 91-243 cm</span>
+          {fieldErrors.height_cm && (
+            <span className="text-red-400">{fieldErrors.height_cm}</span>
+          )}
+        </div>
+      </div>
+    )}
+  </div>
+</div>
   </div>
   );
 };

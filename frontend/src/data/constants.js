@@ -84,7 +84,7 @@ export const dietTypes = [
       color: 'from-green-400/20 to-green-500/20'
     },
     {
-      id: 'non-vegetarian',
+      id: 'non-veg',
       label: 'Non-Vegetarian',
       icon: '🍖',
       description: 'Includes all food groups',
@@ -152,12 +152,6 @@ export const cuisines = [
     { id: 'caribbean', label: 'Caribbean', icon: '🌴' }
   ];
 
-export const mealsPerDay = [
-    { id: '2_meals', label: '2 Meals', icon: '🍽️', description: 'Intermittent fasting friendly' },
-    { id: '3_meals', label: '3 Meals', icon: '🍽️🍽️', description: 'Traditional meal pattern' },
-    { id: '4_meals', label: '4 Meals', icon: '🍽️🍽️🍽️', description: 'Athletic meal pattern' }
-  ];
-
 export const supplements = [
     { 
       id: 'whey', 
@@ -217,3 +211,131 @@ export const formSteps = [
       description: 'Optional supplements to support your goals'
     }
   ];
+
+export const mealsPerDay = [
+  {
+    value: '3',
+    label: '3 Meals',
+    icon: '🍽️',
+    description: 'Traditional meal schedule',
+    timing: 'Breakfast, Lunch, Dinner'
+  },
+  {
+    value: '4',
+    label: '4 Meals',
+    icon: '🥪',
+    description: 'Includes afternoon snack',
+    timing: 'Breakfast, Lunch, Snack, Dinner'
+  },
+  {
+    value: '5',
+    label: '5 Meals',
+    icon: '🥗',
+    description: 'With morning & afternoon snacks',
+    timing: 'Breakfast, AM Snack, Lunch, PM Snack, Dinner'
+  },
+  {
+    value: '6',
+    label: '6 Meals',
+    icon: '🍱',
+    description: 'Frequent smaller portions',
+    timing: 'Every 2-3 hours throughout the day'
+  }
+];
+
+export const foodRestrictions = [
+  { 
+    id: 'pork', 
+    label: 'No Pork', 
+    icon: '🐷', 
+    description: 'Exclude all pork and pork products',
+    details: 'Includes bacon, ham, and other pork derivatives'
+  },
+  { 
+    id: 'beef', 
+    label: 'No Beef', 
+    icon: '🐮', 
+    description: 'Exclude all beef and beef products',
+    details: 'Includes steak, ground beef, and beef-based ingredients'
+  },
+  { 
+    id: 'lamb', 
+    label: 'No Lamb', 
+    icon: '🐑', 
+    description: 'Exclude lamb and mutton',
+    details: 'All cuts of lamb and mutton meat'
+  },
+  { 
+    id: 'chicken', 
+    label: 'No Chicken', 
+    icon: '🍗', 
+    description: 'Exclude chicken and poultry',
+    details: 'Includes chicken, turkey, and other poultry products'
+  }
+];
+
+export const foodAllergies = [
+  { 
+    id: 'peanuts', 
+    label: 'Peanuts', 
+    icon: '🥜', 
+    description: 'Allergy to peanuts and peanut derivatives',
+    details: 'Including peanut oil, peanut flour, and traces in sauces'
+  },
+  { 
+    id: 'tree_nuts', 
+    label: 'Tree Nuts', 
+    icon: '🌰', 
+    description: 'Almonds, walnuts, cashews, pecans, etc.',
+    details: 'Including nut oils, extracts, and traces in desserts'
+  },
+  { 
+    id: 'eggs', 
+    label: 'Eggs', 
+    icon: '🥚', 
+    description: 'Eggs and egg-based products',
+    details: 'Including mayonnaise, baked goods, and egg derivatives'
+  },
+  { 
+    id: 'dairy', 
+    label: 'Dairy', 
+    icon: '🥛', 
+    description: 'Milk and all dairy products',
+    details: 'Including cheese, yogurt, cream, and milk proteins'
+  },
+  { 
+    id: 'soy', 
+    label: 'Soy', 
+    icon: '🫘', 
+    description: 'Soybeans and soy-based products',
+    details: 'Including tofu, soy sauce, and soy lecithin'
+  },
+  { 
+    id: 'wheat', 
+    label: 'Wheat/Gluten', 
+    icon: '🌾', 
+    description: 'Wheat and gluten-containing grains',
+    details: 'Including bread, pasta, and many processed foods'
+  },
+  { 
+    id: 'fish', 
+    label: 'Fish', 
+    icon: '🐟', 
+    description: 'All types of fish',
+    details: 'Including fish sauce, fish oil, and seafood flavoring'
+  },
+  { 
+    id: 'shellfish', 
+    label: 'Shellfish', 
+    icon: '🦐', 
+    description: 'Shrimp, crab, lobster, etc.',
+    details: 'Including shellfish extracts and seafood flavorings'
+  },
+  { 
+    id: 'sesame', 
+    label: 'Sesame', 
+    icon: '🫘', 
+    description: 'Sesame seeds and sesame products',
+    details: 'Including tahini, oils, and traces in Asian cuisine'
+  }
+];

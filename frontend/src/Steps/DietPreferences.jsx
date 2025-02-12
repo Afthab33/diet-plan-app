@@ -1,216 +1,274 @@
 import React from 'react';
-import { Check, Apple, X } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { X, Check, AlertTriangle, Info, ChevronRight } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {foodRestrictions, foodAllergies} from '../data/constants';
 
 const DietPreferences = ({ 
   formData, 
-  handleInputChange,
+  handleInputChange, 
   handleCuisineToggle,
-  dietTypes,
-  cuisines,
-  mealsPerDay 
+  dietTypes, 
+  cuisines, 
+  mealsPerDay,
+  handleFoodRestrictionToggle,
+  handleAllergyToggle 
 }) => {
+
   return (
-    <div className="space-y-8">
-    {/* Header */}
-    <div className="text-center mb-8">
-      <div className="inline-block p-3 rounded-full bg-gradient-to-r from-green-500/20 to-teal-500/20 mb-4">
-        <Apple className="w-8 h-8 text-green-400" />
-      </div>
-      <h3 className="text-2xl font-bold text-white mb-2">Dietary Preferences</h3>
-      <p className="text-gray-400">Customize your meal plan to match your dietary needs</p>
-    </div>
-
-    {/* Diet Type Selection */}
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h4 className="text-lg font-medium text-white flex items-center">
-          <span>Diet Type</span>
-          <span className="ml-2 px-3 py-1 text-xs bg-green-500/10 text-green-400 rounded-full">Choose one</span>
-        </h4>
-        <span className="text-sm text-red-400 bg-red-500/10 px-3 py-1 rounded-full font-medium">Required</span>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {dietTypes.map(type => (
-          <button
-            key={type.id}
-            type="button"
-            onClick={() => handleInputChange('diet_type', type.id)}
-            className={`
-              w-full p-5 rounded-xl text-center transition-all duration-300 relative hover:shadow-lg
-              ${formData.diet_type === type.id 
-                ? 'bg-gradient-to-r from-green-500/20 to-teal-500/20 transform scale-[1.02] border-2 border-green-500/50' 
-                : 'bg-gray-800 hover:bg-gray-700 hover:scale-[1.02] border-2 border-transparent'}
-            `}
-          >
-            {formData.diet_type === type.id && (
-              <div className="absolute top-2 right-2 bg-green-500/20 rounded-full p-1">
-                <Check className="w-4 h-4 text-green-400" />
-              </div>
-            )}
-            <span className="text-3xl mb-3 block">{type.icon}</span>
-            <h5 className="font-semibold text-white mb-2">{type.label}</h5>
-            <p className="text-sm text-gray-300">{type.description}</p>
-          </button>
-        ))}
-      </div>
-    </div>
-
-    {/* Cuisine Preference - Multi Select */}
-    <div className="space-y-4 mt-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h4 className="text-lg font-medium text-white flex items-center">
-            <span>Cuisine Preferences</span>
-            <span className="ml-2 px-3 py-1 text-xs bg-yellow-500/10 text-yellow-400 rounded-full">Mix & Match</span>
-          </h4>
-          <p className="text-sm text-gray-400 mt-1">
-            If you'd like, select any cuisines you enjoy to create your perfect blend of flavors!
-          </p>
-        </div>
-        <div className="flex items-center space-x-3">
-          {formData.cuisines?.length > 0 && (
-            <button
-              onClick={() => handleInputChange('cuisines', [])}
-              className="text-sm bg-gray-700/50 hover:bg-gray-600/50 px-3 py-1 rounded-full text-gray-300 hover:text-white transition-colors flex items-center"
-            >
-            </button>
-          )}
-          <span className="text-sm bg-yellow-500/10 px-3 py-1 rounded-full text-yellow-400 font-medium">
-            {formData.cuisines?.length || 0} selected
-          </span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {cuisines.map(cuisine => (
-          <button
-            key={cuisine.id}
-            type="button"
-            onClick={() => handleCuisineToggle(cuisine.id)}
-            className={`
-              w-full p-4 rounded-xl text-center transition-all duration-300 relative hover:shadow-lg
-              ${formData.cuisines?.includes(cuisine.id)
-                ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 transform scale-[1.02] border-2 border-yellow-500/50' 
-                : 'bg-gray-800 hover:bg-gray-700 hover:scale-[1.02] border-2 border-transparent'}
-            `}
-          >
-            {formData.cuisines?.includes(cuisine.id) && (
-              <div className="absolute top-2 right-2 bg-yellow-500/20 rounded-full p-1">
-                <Check className="w-4 h-4 text-yellow-400" />
-              </div>
-            )}
-            <span className="text-3xl mb-2 block transform transition-transform duration-300 hover:scale-110">{cuisine.icon}</span>
-            <span className="font-medium text-white">{cuisine.label}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Selected Cuisines Summary */}
-      {formData.cuisines?.length > 0 && (
-        <div className="mt-4 p-4 rounded-lg bg-gray-800/50 border border-gray-700">
-          <div className="flex items-start space-x-3">
-            <div className="p-2 rounded-lg bg-yellow-500/20">
-              <Check className="w-5 h-5 text-yellow-400" />
-            </div>
-            <div>
-              <h5 className="text-sm font-medium text-white mb-1">Your Preferred Cuisines</h5>
-              <div className="flex flex-wrap gap-2">
-                {formData.cuisines.map(id => {
-                  const cuisine = cuisines.find(c => c.id === id);
-                  return (
-                    <span 
-                      key={id}
-                      className="inline-flex items-center px-3 py-1 rounded-full bg-gray-700/50 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
-                    >
-                      <span className="mr-1.5">{cuisine?.icon}</span>
-                      {cuisine?.label}
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleCuisineToggle(id);
-                        }}
-                        className="ml-2 hover:text-red-400 transition-colors"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
+    <div className="space-y-12">
+      {/* Diet Type Selection with Enhanced UI */}
+      <section className="space-y-6">
+        <div className="flex items-center justify-between border-b border-gray-700 pb-4">
+          <div className="space-y-1">
+            <h3 className="text-xl font-semibold text-white">Diet Type</h3>
+            <p className="text-sm text-gray-400">Select your primary dietary preference</p>
+          </div>
+          <div className="flex items-center space-x-2 text-sm text-blue-400">
+            <Info className="w-4 h-4" />
+            <span>Your base diet plan</span>
           </div>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {dietTypes.map((diet) => (
+            <button
+              key={diet.id}
+              onClick={() => handleInputChange('diet_type', diet.id)}
+              className={`
+                relative group overflow-hidden rounded-2xl p-6 transition-all duration-300
+                ${formData.diet_type === diet.id 
+                  ? 'bg-gradient-to-br from-green-500/20 to-emerald-600/20 ring-2 ring-green-500/50 scale-[1.02]' 
+                  : 'bg-gray-800/50 hover:bg-gray-700/50 hover:scale-[1.02]'}
+              `}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0">
+                  <span className="text-4xl transform transition-transform duration-300 group-hover:scale-110">
+                    {diet.icon}
+                  </span>
+                </div>
+                <div className="flex-1 text-left space-y-2">
+                  <h4 className="font-semibold text-lg text-white">{diet.label}</h4>
+                  <p className="text-sm text-gray-400">{diet.description}</p>
+                  {formData.diet_type === diet.id && (
+                    <div className="flex items-center space-x-2 text-green-400 text-sm">
+                      <Check className="w-4 h-4" />
+                      <span>Selected</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Food Allergies Section with Enhanced Warning */}
+      <section className="space-y-6">
+        <div className="flex items-center justify-between border-b border-gray-700 pb-4">
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2">
+              <AlertTriangle className="w-5 h-5 text-red-400" />
+              <h3 className="text-xl font-semibold text-white">Food Allergies</h3>
+            </div>
+            <p className="text-sm text-gray-400">Select any food allergies or intolerances you have</p>
+          </div>
+        </div>
+
+        <Alert className="bg-red-900/20 border-red-500/50">
+          <AlertTriangle className="h-4 w-4 text-red-400" />
+          <AlertDescription className="text-sm text-red-200">
+            Selected allergens will be strictly excluded from your meal plan for your safety
+          </AlertDescription>
+        </Alert>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {foodAllergies.map((allergy) => (
+            <button
+              key={allergy.id}
+              onClick={() => handleAllergyToggle(allergy.id)}
+              className={`
+                relative group overflow-hidden rounded-xl p-6 transition-all duration-300
+                ${formData.allergies?.includes(allergy.id)
+                  ? 'bg-gradient-to-br from-red-500/30 to-red-600/30 ring-2 ring-red-500/50' 
+                  : 'bg-gray-800/50 hover:bg-gray-700/50'}
+              `}
+            >
+              <div className="flex items-start space-x-4">
+                <span className="text-3xl transform transition-transform duration-300 group-hover:scale-110">
+                  {allergy.icon}
+                </span>
+                <div className="flex-1 text-left space-y-2">
+                  <h4 className="font-medium text-white flex items-center justify-between">
+                    {allergy.label}
+                    {formData.allergies?.includes(allergy.id) && (
+                      <span className="animate-pulse text-red-400">⚠️</span>
+                    )}
+                  </h4>
+                  <p className="text-sm text-gray-400">{allergy.description}</p>
+                  <p className="text-xs text-gray-500">{allergy.details}</p>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Food Restrictions - Enhanced Non-veg Section */}
+      {formData.diet_type === 'non-veg' && (
+        <section className="space-y-6">
+          <div className="flex items-center justify-between border-b border-gray-700 pb-4">
+            <div className="space-y-1">
+              <h3 className="text-xl font-semibold text-white">Dietary Restrictions</h3>
+              <p className="text-sm text-gray-400">Select any specific meats you don't eat</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {foodRestrictions.map((restriction) => (
+              <button
+                key={restriction.id}
+                onClick={() => handleFoodRestrictionToggle(restriction.id)}
+                className={`
+                  relative group overflow-hidden rounded-xl p-6 transition-all duration-300
+                  ${formData.foodRestrictions?.includes(restriction.id)
+                    ? 'bg-gradient-to-br from-orange-500/20 to-yellow-600/20 ring-2 ring-orange-500/50' 
+                    : 'bg-gray-800/50 hover:bg-gray-700/50'}
+                `}
+              >
+                <div className="flex items-start space-x-4">
+                  <span className="text-3xl transform transition-transform duration-300 group-hover:scale-110">
+                    {restriction.icon}
+                  </span>
+                  <div className="flex-1 text-left space-y-2">
+                    <h4 className="font-medium text-white">{restriction.label}</h4>
+                    <p className="text-sm text-gray-400">{restriction.description}</p>
+                    <p className="text-xs text-gray-500">{restriction.details}</p>
+                  </div>
+                  {formData.foodRestrictions?.includes(restriction.id) ? (
+                    <X className="w-5 h-5 text-orange-400" />
+                  ) : (
+                    <Check className="w-5 h-5 text-gray-400 opacity-0 group-hover:opacity-100" />
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
       )}
 
-      {/* Info Box */}
-      <div className="p-4 rounded-lg bg-gray-800/50 border border-gray-700 mt-6">
-        <div className="flex items-start space-x-3">
-          <div className="p-2 rounded-lg bg-blue-500/20">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div>
+      {/* Enhanced Cuisines Selection */}
+      <section className="space-y-6">
+        <div className="flex items-center justify-between border-b border-gray-700 pb-4">
+          <div className="space-y-1">
+            <h3 className="text-xl font-semibold text-white">Preferred Cuisines</h3>
             <p className="text-sm text-gray-400">
-              Selecting multiple cuisines will give you a more diverse meal plan with mixed dishes from your favorite cuisines.
+              Select cuisines you enjoy most. Your meal plan will focus on these styles.
+            </p>
+          </div>
+          <div className="text-sm text-blue-400">
+            Select multiple
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {cuisines.map((cuisine) => (
+            <button
+              key={cuisine.id}
+              onClick={() => handleCuisineToggle(cuisine.id)}
+              className={`
+                relative group overflow-hidden rounded-xl p-4 transition-all duration-300
+                ${formData.cuisines?.includes(cuisine.id)
+                  ? 'bg-gradient-to-br from-blue-500/20 to-purple-600/20 ring-2 ring-blue-500/50' 
+                  : 'bg-gray-800/50 hover:bg-gray-700/50'}
+              `}
+            >
+              <div className="flex flex-col items-center space-y-3">
+                <span className="text-3xl transform transition-transform duration-300 group-hover:scale-110">
+                  {cuisine.icon}
+                </span>
+                <span className="font-medium text-white text-sm">{cuisine.label}</span>
+                {cuisine.description && (
+                  <p className="text-xs text-gray-400 text-center">{cuisine.description}</p>
+                )}
+                {formData.cuisines?.includes(cuisine.id) && (
+                  <div className="absolute top-2 right-2">
+                    <Check className="w-4 h-4 text-blue-400" />
+                  </div>
+                )}
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Enhanced Meals Per Day Selection */}
+      <section className="space-y-6">
+        <div className="flex items-center justify-between border-b border-gray-700 pb-4">
+          <div className="space-y-1">
+            <h3 className="text-xl font-semibold text-white">Daily Meal Schedule</h3>
+            <p className="text-sm text-gray-400">
+              Choose how many meals you'd like per day. This affects portion sizes and timing.
             </p>
           </div>
         </div>
-      </div>
-    </div>
 
-    {/* Meals Per Day */}
-    <div className="space-y-4 mt-8">
-      <div className="flex items-center justify-between">
-        <h4 className="text-lg font-medium text-white flex items-center">
-          <span>Meals Per Day</span>
-          <span className="ml-2 px-3 py-1 text-xs bg-purple-500/10 text-purple-400 rounded-full">Choose one</span>
-        </h4>
-        <span className="text-sm text-red-400 bg-red-500/10 px-3 py-1 rounded-full font-medium">Required</span>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {mealsPerDay.map(option => (
-          <button
-            key={option.id}
-            type="button"
-            onClick={() => handleInputChange('meals_per_day', option.id)}
-            className={`
-              w-full p-5 rounded-xl text-center transition-all duration-300 relative hover:shadow-lg
-              ${formData.meals_per_day === option.id 
-                ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 transform scale-[1.02] border-2 border-purple-500/50' 
-                : 'bg-gray-800 hover:bg-gray-700 hover:scale-[1.02] border-2 border-transparent'}
-            `}
-          >
-            {formData.meals_per_day === option.id && (
-              <div className="absolute top-2 right-2 bg-purple-500/20 rounded-full p-1">
-                <Check className="w-4 h-4 text-purple-400" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {mealsPerDay.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => handleInputChange('meals_per_day', option.value)}
+              className={`
+                relative group overflow-hidden rounded-xl p-6 transition-all duration-300
+                ${formData.meals_per_day === option.value
+                  ? 'bg-gradient-to-br from-purple-500/20 to-pink-600/20 ring-2 ring-purple-500/50' 
+                  : 'bg-gray-800/50 hover:bg-gray-700/50'}
+              `}
+            >
+              <div className="flex flex-col items-center space-y-3">
+                <span className="text-3xl transform transition-transform duration-300 group-hover:scale-110">
+                  {option.icon}
+                </span>
+                <div className="text-center">
+                  <span className="font-medium text-white">{option.label}</span>
+                  {option.description && (
+                    <p className="text-xs text-gray-400 mt-1">{option.description}</p>
+                  )}
+                </div>
+                {formData.meals_per_day === option.value && (
+                  <div className="absolute top-2 right-2">
+                    <Check className="w-4 h-4 text-purple-400" />
+                  </div>
+                )}
               </div>
-            )}
-            <span className="text-2xl mb-2 block transform transition-transform duration-300 hover:scale-110">{option.icon}</span>
-            <h5 className="font-semibold text-white mb-1">{option.label}</h5>
-            <p className="text-sm text-gray-300">{option.description}</p>
-          </button>
-        ))}
-      </div>
-    </div>
+              {option.timing && (
+                <div className="mt-2 text-xs text-gray-500 text-center">
+                  {option.timing}
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
 
-    {/* Final Info Box */}
-    <div className="p-4 rounded-lg bg-gray-800/50 border border-gray-700 mt-6">
-      <div className="flex items-start space-x-3">
-        <div className="p-2 rounded-lg bg-blue-500/20">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+        {/* Meal Schedule Information */}
+        <div className="bg-gray-800/50 rounded-xl p-4">
+          <div className="flex items-start space-x-3">
+            <Info className="w-5 h-5 text-blue-400 mt-0.5" />
+            <div className="text-sm text-gray-400">
+              <p>Your meal plan will be adjusted based on your selected frequency:</p>
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>3 meals: Traditional breakfast, lunch, and dinner</li>
+                <li>4 meals: Adds a light afternoon snack</li>
+                <li>5 meals: Includes morning and afternoon snacks</li>
+                <li>6 meals: Smaller, more frequent meals throughout the day</li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div>
-          <p className="text-sm text-gray-400">
-            These preferences will help us create a personalized meal plan that fits your lifestyle and taste preferences. 
-            Selecting multiple cuisines will give you more variety in your meal options.
-          </p>
-        </div>
-      </div>
+      </section>
     </div>
-  </div>
   );
 };
 

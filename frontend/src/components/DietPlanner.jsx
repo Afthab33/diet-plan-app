@@ -51,6 +51,7 @@ const DietPlanner = ({ onBack }) => {
     weight: '',
     height_feet: '',
     height_inches: '',
+    height_cm: '',
     activity_level: ''
   });
 
@@ -67,12 +68,15 @@ const DietPlanner = ({ onBack }) => {
     weight: '',
     height_feet: '',
     height_inches: '',
+    height_cm: '',
     activity_level: '',
     goal: '',
     diet_type: '',
     cuisines: [],
     meals_per_day: '',
-    supplements: []
+    supplements: [],
+    foodRestrictions: [],
+    allergies: []
   });
 
 
@@ -105,6 +109,27 @@ const DietPlanner = ({ onBack }) => {
         setFormData(prev => ({
           ...prev,
           [field]: weightInKg
+        }));
+        return;
+      }
+
+      if (field === 'height_cm') {
+        const numValue = value.replace(/\D/g, '');
+        setFormData(prev => ({
+          ...prev,
+          height_cm: numValue,
+          height_feet: '',
+          height_inches: ''
+        }));
+        return;
+      }
+    
+      if (field === 'height_feet' || field === 'height_inches') {
+        const numValue = value.replace(/\D/g, '');
+        setFormData(prev => ({
+          ...prev,
+          [field]: numValue,
+          height_cm: ''
         }));
         return;
       }
@@ -172,17 +197,26 @@ const DietPlanner = ({ onBack }) => {
         }
       }
   
-      if (!formData.height_feet) {
-        errors.height_feet = 'Height (feet) is required';
-      } else if (formData.height_feet < 3 || formData.height_feet > 8) {
-        errors.height_feet = 'Height must be between 3 and 8 feet';
+      if (heightUnit === 'ft') {
+        if (!formData.height_feet) {
+          errors.height_feet = 'Height (feet) is required';
+        } else if (formData.height_feet < 3 || formData.height_feet > 8) {
+          errors.height_feet = 'Height must be between 3 and 8 feet';
+        }
+      
+        if (!formData.height_inches) {
+          errors.height_inches = 'Height (inches) is required';
+        } else if (formData.height_inches < 0 || formData.height_inches > 11) {
+          errors.height_inches = 'Inches must be between 0 and 11';
+        }
+      } else {
+        if (!formData.height_cm) {
+          errors.height_cm = 'Height is required';
+        } else if (formData.height_cm < 91 || formData.height_cm > 243) {
+          errors.height_cm = 'Height must be between 91 and 243 cm';
+        }
       }
-  
-      if (!formData.height_inches) {
-        errors.height_inches = 'Height (inches) is required';
-      } else if (formData.height_inches < 0 || formData.height_inches > 11) {
-        errors.height_inches = 'Inches must be between 0 and 11';
-      }
+
     }
   
     setFieldErrors(errors);
@@ -228,6 +262,25 @@ const DietPlanner = ({ onBack }) => {
         : [...prev.supplements, supplementId]
     }));
   };
+
+  const handleFoodRestrictionToggle = (restrictionId) => {
+  setFormData(prev => ({
+    ...prev,
+    foodRestrictions: prev.foodRestrictions?.includes(restrictionId)
+      ? prev.foodRestrictions.filter(id => id !== restrictionId)
+      : [...(prev.foodRestrictions || []), restrictionId]
+  }));
+};
+
+const handleAllergyToggle = (allergyId) => {
+  setFormData(prev => ({
+    ...prev,
+    allergies: prev.allergies?.includes(allergyId)
+      ? prev.allergies.filter(id => id !== allergyId)
+      : [...(prev.allergies || []), allergyId]
+  }));
+ };
+
 
   const handleStepComplete = (nextStep) => {
     if (nextStep > currentStep) {
@@ -430,13 +483,22 @@ const ErrorDisplay = ({ error, onRetry, onBack }) => (
     // Format the cuisines data properly
     const formattedData = {
       ...formData,
-      // Include both the original cuisines array and a primary cuisine
+      weight: weightUnit === 'lbs' 
+        ? convertWeight(formData.weight, 'lbs', 'kg')
+        : parseFloat(formData.weight),
+      height: heightUnit === 'ft' 
+        ? convertHeight.feetToCm(formData.height_feet, formData.height_inches)
+        : parseInt(formData.height_cm),
       cuisines: formData.cuisines || [],
-      cuisine: formData.cuisines && formData.cuisines.length > 0 
-        ? formData.cuisines[0]  // Take the first cuisine as primary
-        : 'international'  // Default fallback
+      cuisine: formData.cuisines?.[0] || 'international',
+      foodRestrictions: formData.foodRestrictions || [],
+      allergies: formData.allergies || []
     };
-  
+    
+
+    delete formattedData.height_feet;
+    delete formattedData.height_inches;
+    delete formattedData.height_cm;
     // Reset states
     setApiError(null);
     setProcessingStates({
@@ -522,6 +584,9 @@ const styles = `
   weightUnit={weightUnit}
   setWeightUnit={setWeightUnit}
   convertWeight={convertWeight}
+  heightUnit={heightUnit}
+  setHeightUnit={setHeightUnit}
+  convertHeight={convertHeight}
 />
 )}
 
@@ -547,6 +612,8 @@ const styles = `
   formData={formData}
   handleInputChange={handleInputChange}
   handleCuisineToggle={handleCuisineToggle}
+  handleFoodRestrictionToggle={handleFoodRestrictionToggle}
+  handleAllergyToggle={handleAllergyToggle}
   dietTypes={dietTypes}
   cuisines={cuisines}
   mealsPerDay={mealsPerDay}
@@ -625,16 +692,20 @@ const styles = `
           setDietPlan(null);
           setShowResults(false);
           setFormData({
+            gender: '',
             age: '',
             weight: '',
             height_feet: '',
             height_inches: '',
+            height_cm: '',
             activity_level: '',
             goal: '',
             diet_type: '',
             cuisine: '',
             meals_per_day: '',
-            supplements: []
+            supplements: [],
+            foodRestrictions: [],
+            allergies: []
           });
           setCurrentStep(0);
         }}
@@ -717,8 +788,8 @@ const styles = `
         />
       )}
 
-      {/* Diet Plan Display */}
-      {dietPlan && showResults && (
+{/* Diet Plan Display */}
+{dietPlan && showResults && (
         <div className="transition-all duration-500 ease-out">
           <DietPlanDisplay 
             dietPlan={dietPlan} 
@@ -731,12 +802,15 @@ const styles = `
                 weight: '',
                 height_feet: '',
                 height_inches: '',
+                height_cm: '',
                 activity_level: '',
                 goal: '',
                 diet_type: '',
                 cuisine: '',
                 meals_per_day: '',
-                supplements: []
+                supplements: [],
+                foodRestrictions: [],
+                allergies: []
               });
               setCurrentStep(0);
             }} 
