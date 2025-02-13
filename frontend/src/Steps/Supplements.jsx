@@ -3,6 +3,7 @@ import { Check, Trophy } from 'lucide-react';
 
 const Supplements = ({ 
   formData, 
+  setFormData,
   handleSupplementToggle,
   showSupplements,
   setShowSupplements,
@@ -39,7 +40,11 @@ const Supplements = ({
         type="button"
         onClick={() => {
           setShowSupplements(false);
-          setFormData(prev => ({ ...prev, supplements: [] }));
+          supplements.forEach(supplement => {
+            if (formData.supplements.includes(supplement.id)) {
+              handleSupplementToggle(supplement.id);
+            }
+          });
         }}
         className={`
           w-full p-4 rounded-xl text-center transition-all duration-300

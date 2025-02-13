@@ -6,7 +6,7 @@ import {
   Weight, Trophy, ChevronRight, Heart, 
   ArrowLeft, Check, Bot, Brain, AlertCircle, RefreshCcw, Loader2, X, User, Scale, RulerIcon
 } from 'lucide-react';
-import DietPlanDisplay from './DietPlanDisplay';
+import DietPlanDisplay from '../components/DietDisplay/DietPlanDisplay';
 import WorkoutLoader from './WorkoutLoader';
 import BasicInfo from '../Steps/BasicInfo';
 import ActivityLevel from '../Steps/Activity';
@@ -22,6 +22,7 @@ import {
   supplements, 
   formSteps 
 } from '../data/constants';
+import { calculateNutrition, generateApiPayload } from '@/utils/nutritionCalculator';
 
 const BackButton = ({ onClick }) => (
     <button
@@ -43,7 +44,8 @@ const DietPlanner = ({ onBack }) => {
   const [showSupplements, setShowSupplements] = useState(null);
   const [apiError, setApiError] = useState(null);
   const [weightUnit, setWeightUnit] = useState('kg');
-  const [heightUnit, setHeightUnit] = useState('ft'); 
+  const [heightUnit, setHeightUnit] = useState('ft');
+  const [isDietPreferencesValid, setIsDietPreferencesValid] = useState(false);
   
   const [fieldErrors, setFieldErrors] = useState({
     gender: '',
@@ -282,32 +284,26 @@ const handleAllergyToggle = (allergyId) => {
  };
 
 
-  const handleStepComplete = (nextStep) => {
-    if (nextStep > currentStep) {
-      let isValid = true;
-      
-      if (currentStep === 0) {
-        isValid = validateBasicInfo();
-      } else if (currentStep === 1) {
-        isValid = validateActivityLevel();
-      } else if (currentStep === 2) {
-        isValid = validateGoalSelection();
-      }
-  
-      if (!isValid) {
-        // Optional: Add some visual feedback like a shake animation
-        return;
-      }
+ const handleStepComplete = (nextStep) => {
+  if (nextStep > currentStep) {
+    let isValid = validateStep(currentStep);
+    
+    if (!isValid) {
+      // Add visual feedback
+      setError(`Please complete all required fields in ${formSteps[currentStep].title}`);
+      setTimeout(() => setError(null), 3000);
+      return;
     }
-  
-    if (nextStep >= 0 && nextStep < formSteps.length) {
-      setIsAnimating(true);
-      setTimeout(() => {
-        setCurrentStep(nextStep);
-        setIsAnimating(false);
-      }, 300);
-    }
-  };
+  }
+
+  if (nextStep >= 0 && nextStep < formSteps.length) {
+    setIsAnimating(true);
+    setTimeout(() => {
+      setCurrentStep(nextStep);
+      setIsAnimating(false);
+    }, 300);
+  }
+};
 
 
   const EnhancedInput = ({ label, value, onChange, placeholder }) => (
@@ -465,9 +461,7 @@ const ErrorDisplay = ({ error, onRetry, onBack }) => (
       case 2: // Goals
         return formData.goal !== '';
       case 3: // Diet Preferences
-        return formData.diet_type !== '' && 
-               formData.cuisine !== '' && 
-               formData.meals_per_day !== '';
+      return isDietPreferencesValid;
       case 4: // Supplements
         return true; // Supplements are optional
       default:
@@ -476,66 +470,70 @@ const ErrorDisplay = ({ error, onRetry, onBack }) => (
   };
 
   const handleFinalSubmit = async () => {
-    if (!validateStep(currentStep)) {
-      return;
-    }
-  
-    // Format the cuisines data properly
-    const formattedData = {
-      ...formData,
-      weight: weightUnit === 'lbs' 
-        ? convertWeight(formData.weight, 'lbs', 'kg')
-        : parseFloat(formData.weight),
-      height: heightUnit === 'ft' 
-        ? convertHeight.feetToCm(formData.height_feet, formData.height_inches)
-        : parseInt(formData.height_cm),
-      cuisines: formData.cuisines || [],
-      cuisine: formData.cuisines?.[0] || 'international',
-      foodRestrictions: formData.foodRestrictions || [],
-      allergies: formData.allergies || []
-    };
-    
-
-    delete formattedData.height_feet;
-    delete formattedData.height_inches;
-    delete formattedData.height_cm;
-    // Reset states
-    setApiError(null);
-    setProcessingStates({
-      calculatingMetrics: false,
-      generatingPlan: true,
-      optimizingMeals: false,
-      finalizingPlan: false
-    });
+    if (!validateStep(currentStep)) return;
   
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/generate-diet/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify(formattedData)
+      setProcessingStates({
+        calculatingMetrics: true,
+        generatingPlan: false,
+        optimizingMeals: false,
+        finalizingPlan: false
       });
   
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to generate diet plan');
-      }
+      // Calculate nutrition data with all details
+      const nutritionData = calculateNutrition({
+        gender: formData.gender,
+        age: Number(formData.age),
+        weight: weightUnit === 'lbs' ? convertWeight(formData.weight, 'lbs', 'kg') : Number(formData.weight),
+        height: heightUnit === 'ft' ? convertHeight.feetToCm(formData.height_feet, formData.height_inches) : Number(formData.height_cm),
+        activityLevel: formData.activity_level,
+        goal: formData.goal,
+        mealsPerDay: Number(formData.meals_per_day),
+        dietType: formData.diet_type,
+        cuisines: formData.cuisines,
+        foodRestrictions: formData.foodRestrictions,
+        supplements: formData.supplements
+      });
   
-      const data = await response.json();
-      
-      if (!data) {
-        throw new Error('Invalid response from server');
-      }
+      setProcessingStates({
+        calculatingMetrics: false,
+        generatingPlan: true,
+        optimizingMeals: false,
+        finalizingPlan: false
+      });
   
-      // Store the plan and show results
-      setDietPlan(data);
+      // Generate API payload
+      const apiPayload = generateApiPayload(nutritionData, formData);
+  
+      // Get meal plan from backend
+      const response = await fetch("http://127.0.0.1:8000/api/generate-diet/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(apiPayload)
+      });
+  
+      if (!response.ok) throw new Error('Failed to generate meal plan');
+  
+      const mealPlan = await response.json();
+  
+      // Create complete diet plan with all calculation details
+      const completeDietPlan = {
+        ...mealPlan,
+        daily_summary: {
+          calories: nutritionData.calories,
+          protein: nutritionData.protein,
+          carbs: nutritionData.carbs,
+          fats: nutritionData.fats,
+          macro_percentages: nutritionData.macroPercentages,
+          calculations: nutritionData.calculations 
+        }
+      };
+  
+      setDietPlan(completeDietPlan);
       setShowResults(true);
   
-    } catch (err) {
-      setApiError(err.message || 'Failed to generate diet plan. Please try again.');
-      console.error('Error:', err);
+    } catch (error) {
+      setApiError(error.message);
     } finally {
       setProcessingStates({
         calculatingMetrics: false,
@@ -617,6 +615,7 @@ const styles = `
   dietTypes={dietTypes}
   cuisines={cuisines}
   mealsPerDay={mealsPerDay}
+  onValidationChange={setIsDietPreferencesValid}
 />
 )}
 
@@ -685,31 +684,38 @@ const styles = `
 
   if (showResults && dietPlan) {
     return (
-      <DietPlanDisplay 
-        dietPlan={dietPlan}
-        formData={formData}
-        onReset={() => {
-          setDietPlan(null);
-          setShowResults(false);
-          setFormData({
-            gender: '',
-            age: '',
-            weight: '',
-            height_feet: '',
-            height_inches: '',
-            height_cm: '',
-            activity_level: '',
-            goal: '',
-            diet_type: '',
-            cuisine: '',
-            meals_per_day: '',
-            supplements: [],
-            foodRestrictions: [],
-            allergies: []
-          });
-          setCurrentStep(0);
-        }}
-      />
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+        <DietPlanDisplay 
+          dietPlan={dietPlan}
+          formData={formData}
+          setFormData={setFormData}
+          userInfo={{
+            ...formData,
+            nutritionCalc: dietPlan.daily_summary
+          }}
+          onReset={() => {
+            setDietPlan(null);
+            setShowResults(false);
+            setFormData({
+              gender: '',
+              age: '',
+              weight: '',
+              height_feet: '',
+              height_inches: '',
+              height_cm: '',
+              activity_level: '',
+              goal: '',
+              diet_type: '',
+              cuisine: '',
+              meals_per_day: '',
+              supplements: [],
+              foodRestrictions: [],
+              allergies: []
+            });
+            setCurrentStep(0);
+          }}
+        />
+      </div>
     );
   }
 
@@ -793,6 +799,7 @@ const styles = `
         <div className="transition-all duration-500 ease-out">
           <DietPlanDisplay 
             dietPlan={dietPlan} 
+            userInfo={formData}
             onReset={() => {
               setDietPlan(null);
               setShowResults(false);
