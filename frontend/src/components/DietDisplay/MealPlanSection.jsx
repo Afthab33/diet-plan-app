@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   UtensilsCrossed, 
   Clock, 
-  ChevronDown, 
-  ChevronUp,
   Flame,
   Scale,
   Calculator
@@ -37,8 +35,6 @@ const getFoodEmoji = (foodName) => {
 };
 
 const MealPlanSection = ({ mealPlan = [] }) => {
-  const [expandedMeal, setExpandedMeal] = useState(null);
-
   if (!Array.isArray(mealPlan) || mealPlan.length === 0) {
     return (
       <section className="space-y-6 mt-8">
@@ -131,7 +127,6 @@ const MealPlanSection = ({ mealPlan = [] }) => {
       <span className="text-sm font-medium text-white">{value}g</span>
     </div>
   );
-
   return (
     <section className="space-y-6 mt-8">
       <div className="flex items-center justify-between">
@@ -177,50 +172,39 @@ const MealPlanSection = ({ mealPlan = [] }) => {
         {mealPlan.map((meal, index) => {
           if (!meal || !meal.foods) return null;
           
-          const isExpanded = expandedMeal === meal.meal_number;
           const mealTotals = calculateMealTotals(meal.foods);
           const timing = getMealTiming(meal.meal_number, mealPlan.length);
           
           return (
             <Card 
               key={meal.meal_number || index}
-              className={`bg-gray-800/50 border-gray-700/50 transition-all duration-300 ${
-                isExpanded ? 'ring-2 ring-blue-500/50' : 'hover:bg-gray-800/70'
-              }`}
+              className="bg-gray-800/50 border-gray-700/50 transition-all duration-300"
             >
               <CardContent className="p-0">
-                <button
-                  onClick={() => setExpandedMeal(isExpanded ? null : meal.meal_number)}
-                  className="w-full p-6 flex items-center justify-between"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
-                      <UtensilsCrossed className="w-6 h-6 text-blue-400" />
-                    </div>
-                    <div className="text-left">
-                      <h3 className="text-lg font-semibold text-white">
-                        {timing}
-                      </h3>
-                      <div className="flex items-center space-x-4 mt-1">
-                        <div className="flex items-center space-x-1 text-orange-400">
-                          <Flame className="w-4 h-4" />
-                          <span className="text-sm">{mealTotals.calories} kcal</span>
-                        </div>
-                        <div className="text-sm text-gray-400">
-                          {meal.foods.length} items
+                <div className="w-full p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+                        <UtensilsCrossed className="w-6 h-6 text-blue-400" />
+                      </div>
+                      <div className="text-left">
+                        <h3 className="text-lg font-semibold text-white">
+                          {timing}
+                        </h3>
+                        <div className="flex items-center space-x-4 mt-1">
+                          <div className="flex items-center space-x-1 text-orange-400">
+                            <Flame className="w-4 h-4" />
+                            <span className="text-sm">{mealTotals.calories} kcal</span>
+                          </div>
+                          <div className="text-sm text-gray-400">
+                            {meal.foods.length} items
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  {isExpanded ? (
-                    <ChevronUp className="w-5 h-5 text-gray-400" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-400" />
-                  )}
-                </button>
 
-                {isExpanded && (
-                  <div className="px-6 pb-6 animate-fade-in">
+                  <div className="px-6 pb-6">
                     <div className="p-4 rounded-lg bg-gray-900/50 space-y-4">
                       <div className="flex items-center space-x-4 pb-4 border-b border-gray-700">
                         <MacroIndicator label="Protein" value={mealTotals.protein} color="blue" />
@@ -236,10 +220,10 @@ const MealPlanSection = ({ mealPlan = [] }) => {
                           return (
                             <div 
                               key={foodIndex}
-                              className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-all duration-300 transform hover:scale-102 hover:translate-x-1"
+                              className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-all duration-300"
                             >
                               <div className="flex items-center space-x-3">
-                                <span className="text-2xl animate-bounce-slow">{emoji}</span>
+                                <span className="text-2xl">{emoji}</span>
                                 <div>
                                   <div className="text-white font-medium">{food.name}</div>
                                   <div className="text-sm text-gray-400">{food.quantity}</div>
@@ -257,29 +241,12 @@ const MealPlanSection = ({ mealPlan = [] }) => {
                       </div>
                     </div>
                   </div>
-                )}
+                </div>
               </CardContent>
             </Card>
           );
         })}
       </div>
-
-      <style jsx>{`
-        @keyframes bounce-slow {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-5px); }
-        }
-        .animate-bounce-slow {
-          animation: bounce-slow 2s infinite;
-        }
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out;
-        }
-      `}</style>
     </section>
   );
 };

@@ -54,15 +54,26 @@ const supplementMacros = {
     const carbCalories = totalCalories - (proteinCalories + fatCalories);
     const carbs = carbCalories / 4;
   
-    const { adjustedCalories, adjustedProtein, adjustedCarbs, adjustedFats } = 
-      adjustForSupplements(totalCalories, protein, carbs, fats, input.supplements);
-  
+    // Calculate macros percentages from the total (including supplements)
     const macroPercentages = {
       protein: Math.round((proteinCalories / totalCalories) * 100),
       carbs: Math.round((carbCalories / totalCalories) * 100),
       fats: Math.round((fatCalories / totalCalories) * 100)
     };
   
+    // For display to user, use total values including supplements
+    const displayValues = {
+      calories: Math.round(totalCalories),
+      protein: Math.round(protein),
+      carbs: Math.round(carbs),
+      fats: Math.round(fats)
+    };
+  
+    // For backend API, subtract supplement values
+    const { adjustedCalories, adjustedProtein, adjustedCarbs, adjustedFats } = 
+      adjustForSupplements(totalCalories, protein, carbs, fats, input.supplements);
+  
+    // Distribute meals based on adjusted values (for backend)
     const mealDistribution = distributeMacros(
       adjustedCalories,
       adjustedProtein,
@@ -72,23 +83,28 @@ const supplementMacros = {
     );
   
     return {
-    calories: Math.round(totalCalories),
-    protein: Math.round(protein),
-    carbs: Math.round(carbs),
-    fats: Math.round(fats),
-    macroPercentages,
-    mealDistribution,
-    calculations: {
-      bmr: Math.round(bmr),
-      tdee: Math.round(tdee),
-      goalAdjustment: Math.round(goalAdjustment),
-      proteinCalculation: {
-        multiplier: proteinMultiplier,
-        total: Math.round(protein)
+      // Values for display (including supplements)
+      ...displayValues,
+      macroPercentages,
+      // Store adjusted values to be used when generating API payload
+      backendValues: {
+        calories: Math.round(adjustedCalories),
+        protein: Math.round(adjustedProtein),
+        carbs: Math.round(adjustedCarbs),
+        fats: Math.round(adjustedFats)
+      },
+      mealDistribution,
+      calculations: {
+        bmr: Math.round(bmr),
+        tdee: Math.round(tdee),
+        goalAdjustment: Math.round(goalAdjustment),
+        proteinCalculation: {
+          multiplier: proteinMultiplier,
+          total: Math.round(protein)  // Use unadjusted protein for display
+        }
       }
-    }
+    };
   };
-};
   
   const adjustForSupplements = (calories, protein, carbs, fats, supplements) => {
     let adjustedCalories = calories;
@@ -122,10 +138,11 @@ const supplementMacros = {
   };
   
   export const generateApiPayload = (nutritionData, formData) => ({
-    calories: nutritionData.calories,
-    protein: nutritionData.protein,
-    carbs: nutritionData.carbs,
-    fats: nutritionData.fats,
+    // Use the adjusted backend values for the API
+    calories: nutritionData.backendValues.calories,
+    protein: nutritionData.backendValues.protein,
+    carbs: nutritionData.backendValues.carbs,
+    fats: nutritionData.backendValues.fats,
     meals_per_day: Number(formData.meals_per_day),
     diet_type: formData.diet_type,
     cuisines: formData.cuisines,
