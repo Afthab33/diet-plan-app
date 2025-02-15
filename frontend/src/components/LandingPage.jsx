@@ -4,27 +4,11 @@ import {
   Utensils, Heart, Clock, Leaf, Scale, Activity,
   Code, Linkedin, Apple, Trophy, Target, ArrowDown
 } from 'lucide-react';
-import { AiExplainerTab, AiExplainerBlog } from './AiExplainerTab';
 import profileImage from '/Users/aftab/Projects/diet-app/frontend/src/assets/images/profileImage.jpg';
+import { Link } from 'react-router-dom';
 
-
-const FloatingFood = ({ emoji, delay, duration, x }) => (
-  <div 
-    className="absolute text-3xl animate-float-food"
-    style={{
-      animationDelay: `${delay}s`,
-      animationDuration: `${duration}s`,
-      left: `${x}%`,
-      top: '-20%'
-    }}
-  >
-    {emoji}
-  </div>
-);
-
-const LandingPage = ({ onGetStarted }) => {
+const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -115,7 +99,7 @@ const LandingPage = ({ onGetStarted }) => {
   );
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen">
   {/* Dynamic Background */}
   <div className="absolute inset-0 overflow-hidden">
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.03),transparent)]" />
@@ -140,7 +124,8 @@ const LandingPage = ({ onGetStarted }) => {
           { emoji: '🥕', left: '80%', top: '35%', delay: '1.2s' },
           { emoji: '🥚', left: '20%', top: '45%', delay: '1.5s' },
           { emoji: '🥦', left: '70%', top: '75%', delay: '1.8s' },
-          { emoji: '🍗', left: '5%', top: '85%', delay: '2.1s' }
+          { emoji: '🍗', left: '5%', top: '85%', delay: '2.1s' },
+          { emoji: '🍎', left: '80%', top: '85%', delay: '0s' },
         ].map((item, index) => (
           <div
             key={index}
@@ -150,7 +135,7 @@ const LandingPage = ({ onGetStarted }) => {
               left: item.left,
               top: item.top,
               filter: 'drop-shadow(0 0 15px rgba(50,50,50,0.4))',
-              opacity: 0.9, // Increased from 0.75
+              opacity: 2.0,
               animation: 'gentle-float 3s ease-in-out infinite',
               animationDelay: item.delay
             }}
@@ -203,14 +188,19 @@ const LandingPage = ({ onGetStarted }) => {
       </div>
 
       <div className="flex items-center space-x-3">
-      <AiExplainerTab onLearnMore={() => setShowAiBlog(true)} />
-      <a
-        href="#ai-explanation"
-        className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500/20 to-purple-500/20 hover:from-blue-500/30 hover:to-purple-500/30 text-blue-400 hover:text-white transition-all duration-300"
-      >
-        <span>Learn More</span>
-      </a>
-    </div>
+        <div className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20">
+          <Brain className="w-5 h-5 text-blue-400" />
+          <span className="text-blue-400 font-medium">Want to know how we generate AI based diet plan?</span>
+            <ArrowRight className="w-4 h-4 text-purple-400 group-hover:translate-x-1 transition-transform duration-300" />
+        </div>
+        
+        <button
+          onClick={() => onShowNutritionGuide()}
+          className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-500/20 transition-all duration-300 group"
+        >
+          <span className="text-purple-400 font-medium">Learn Now</span>
+        </button>
+      </div>
     </div>
   </div>
 </header>

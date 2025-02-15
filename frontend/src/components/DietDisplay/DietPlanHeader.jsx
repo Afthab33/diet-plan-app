@@ -31,7 +31,7 @@ const DietPlanHeader = ({ userInfo }) => {
 
   return (
     <div className="space-y-8">
-      {/* Hero Section with Enhanced Design */}
+      {/* Hero Section*/}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-green-500 via-teal-500 to-blue-500 p-8 md:p-12">
         <div className="absolute inset-0 bg-grid-white/10">
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
@@ -84,7 +84,7 @@ const DietPlanHeader = ({ userInfo }) => {
         </div>
       </div>
 
-      {/* Enhanced Info Cards Grid */}
+      {/*Info Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Profile Card */}
         <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700/50 overflow-hidden group hover:shadow-lg hover:shadow-green-500/10 transition-all duration-300">
@@ -96,7 +96,6 @@ const DietPlanHeader = ({ userInfo }) => {
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-white mb-3 flex items-center justify-between">
                   Profile
-                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform duration-300" />
                 </h3>
                 <div className="space-y-2">
                   <ProfileDetail label="Age" value={`${userInfo.age} years`} />
@@ -124,7 +123,6 @@ const DietPlanHeader = ({ userInfo }) => {
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-white mb-3 flex items-center justify-between">
                   Activity Level
-                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform duration-300" />
                 </h3>
                 <div className="space-y-2">
                   <div className="text-gray-100 font-medium">
@@ -149,7 +147,6 @@ const DietPlanHeader = ({ userInfo }) => {
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-white mb-3 flex items-center justify-between">
                   Your Goal
-                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform duration-300" />
                 </h3>
                 <div className="space-y-2">
                   <div className="text-gray-100 font-medium">

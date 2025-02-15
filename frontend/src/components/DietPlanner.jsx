@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
-  Dumbbell, Activity, Target, Apple, 
-  Weight, Trophy, ChevronRight, Heart, 
-  ArrowLeft, Check, Bot, Brain, AlertCircle, RefreshCcw, Loader2, X, User, Scale, RulerIcon
+  Dumbbell, ChevronRight, Heart, 
+  ArrowLeft, Check, Bot, AlertCircle, RefreshCcw, Loader2, X, User, Scale, RulerIcon
 } from 'lucide-react';
 import DietPlanDisplay from '../components/DietDisplay/DietPlanDisplay';
 import WorkoutLoader from './WorkoutLoader';
@@ -15,7 +14,7 @@ import DietPreferences from '../Steps/DietPreferences';
 import Supplements from '../Steps/Supplements';
 import { 
   activityLevels, 
-  goals, 
+  goals,
   dietTypes, 
   cuisines, 
   mealsPerDay, 
@@ -63,6 +62,7 @@ const DietPlanner = ({ onBack }) => {
     optimizingMeals: false,
     finalizingPlan: false
   });
+  
 
   const [formData, setFormData] = useState({
     gender: '',
@@ -83,7 +83,6 @@ const DietPlanner = ({ onBack }) => {
 
 
   const handleInputChange = (field, value) => {
-    // Clear error when user makes a selection
     if (fieldErrors[field]) {
       setFieldErrors(prev => ({
         ...prev,
@@ -237,22 +236,13 @@ const DietPlanner = ({ onBack }) => {
     setFieldErrors(errors);
     return !errors.activity_level;
   };
-  
-  const validateGoalSelection = () => {
-    if (currentStep === 2) { // Assuming goals step is index 2
-      if (!formData.goal) {
-        return false;
-      }
-    }
-    return true;
-  };
 
   const handleCuisineToggle = (cuisineId) => {
     setFormData(prev => ({
       ...prev,
-      cuisines: prev.cuisines.includes(cuisineId)
-        ? prev.cuisines.filter(id => id !== cuisineId)
-        : [...prev.cuisines, cuisineId]
+      cuisines: (prev.cuisines || []).includes(cuisineId)
+        ? (prev.cuisines || []).filter(id => id !== cuisineId)
+        : [...(prev.cuisines || []), cuisineId]
     }));
   };
 
@@ -289,7 +279,6 @@ const handleAllergyToggle = (allergyId) => {
     let isValid = validateStep(currentStep);
     
     if (!isValid) {
-      // Add visual feedback
       setError(`Please complete all required fields in ${formSteps[currentStep].title}`);
       setTimeout(() => setError(null), 3000);
       return;
@@ -306,118 +295,7 @@ const handleAllergyToggle = (allergyId) => {
 };
 
 
-  const EnhancedInput = ({ label, value, onChange, placeholder }) => (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-300">{label}</label>
-      <input
-        type="number"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full px-4 py-3 rounded-xl bg-gray-700/50 border-gray-600 
-          focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 
-          transition-all duration-300"
-      />
-    </div>
-  );
-
-  const CardOption = ({ 
-    selected, 
-    onClick, 
-    color = 'from-blue-500/20 to-blue-600/20',
-    children 
-  }) => (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`
-        w-full relative overflow-hidden rounded-xl p-4 transition-all duration-300
-        ${selected 
-          ? `bg-gradient-to-br ${color} scale-105 ring-2 ring-blue-400` 
-          : 'bg-gray-800 hover:bg-gray-700'}
-        cursor-pointer hover:scale-105 group
-      `}
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent 
-        opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      <div className="relative z-10">
-        {children}
-        {selected && (
-          <div className="absolute top-2 right-2">
-            <Check className="w-4 h-4 text-blue-400" />
-          </div>
-        )}
-      </div>
-    </button>
-  );
-
-  const ProgressIndicator = () => (
-    <div className="fixed top-0 left-0 w-full z-50">
-      <div className="h-1 bg-gray-800">
-        <div 
-          className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 
-            transition-all duration-700 ease-out"
-          style={{ 
-            width: `${((currentStep + 1) / formSteps.length) * 100}%`,
-            backgroundSize: '200% 100%',
-            animation: 'gradient 2s linear infinite'
-          }}
-        />
-      </div>
-    </div>
-  );
-
-  const ProcessingAnimation = ({ states }) => (
-    <div className="fixed inset-0 bg-gray-900/80 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-gray-800/90 rounded-2xl p-8 max-w-md w-full mx-4">
-        <div className="flex items-center justify-center mb-6">
-          <div className="relative">
-            <div className="absolute inset-0 bg-blue-500/20 rounded-full animate-ping" />
-            <Bot className="w-12 h-12 text-blue-400 relative animate-pulse" />
-          </div>
-        </div>
-        
-        <div className="space-y-4">
-          {Object.entries(states).map(([key, active], index) => {
-            const label = key
-              .replace(/([A-Z])/g, ' $1')
-              .toLowerCase()
-              .replace(/^\w/, c => c.toUpperCase());
-              
-            return (
-              <div key={key} className="relative">
-                <div className="flex items-center space-x-3">
-                  {active ? (
-                    <Loader2 className="w-5 h-5 text-blue-400 animate-spin" />
-                  ) : (
-                    <div className="w-5 h-5 rounded-full border-2 border-gray-600" />
-                  )}
-                  <span className={active ? 'text-blue-400' : 'text-gray-400'}>
-                    {label}
-                  </span>
-                </div>
-                {index < Object.entries(states).length - 1 && (
-                  <div className="absolute left-2.5 top-full h-8 w-px bg-gray-600" />
-                )}
-              </div>
-            );
-          })}
-        </div>
-  
-        {/* AI Processing Visual */}
-        <div className="mt-8">
-          <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-            <div className="h-full w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-progress" />
-          </div>
-          <div className="mt-4 text-sm text-gray-400 text-center">
-            AI is crafting your personalized diet plan...
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  // Add this component for error handling
+// Component for error handling
 const ErrorDisplay = ({ error, onRetry, onBack }) => (
     <div className="fixed inset-0 bg-gray-900/80 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-gray-800/90 rounded-2xl p-8 max-w-md w-full mx-4">
@@ -480,7 +358,7 @@ const ErrorDisplay = ({ error, onRetry, onBack }) => (
         finalizingPlan: false
       });
   
-      // Calculate nutrition data with all details
+      // Calculating nutrition data with all details
       const nutritionData = calculateNutrition({
         gender: formData.gender,
         age: Number(formData.age),
@@ -502,10 +380,10 @@ const ErrorDisplay = ({ error, onRetry, onBack }) => (
         finalizingPlan: false
       });
   
-      // Generate API payload
+      // Generating API payload
       const apiPayload = generateApiPayload(nutritionData, formData);
   
-      // Get meal plan from backend
+      // Getting meal plan from backend
       const response = await fetch("http://127.0.0.1:8000/api/generate-diet/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -516,7 +394,7 @@ const ErrorDisplay = ({ error, onRetry, onBack }) => (
   
       const mealPlan = await response.json();
   
-      // Create complete diet plan with all calculation details
+      // Creating complete diet plan with all calculation details
       const completeDietPlan = {
         ...mealPlan,
         daily_summary: {
@@ -544,7 +422,6 @@ const ErrorDisplay = ({ error, onRetry, onBack }) => (
     }
   };
 
-  // Add to your component's styles
 const styles = `
 @keyframes progress {
   0% { transform: translateX(-100%); }
@@ -555,7 +432,6 @@ const styles = `
   animation: progress 2s linear infinite;
 }
 `;
-
 
   const renderCurrentStep = () => {
     const step = formSteps[currentStep];
@@ -684,7 +560,7 @@ const styles = `
 
   if (showResults && dietPlan) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      <div className="min-h-screen">
         <DietPlanDisplay 
           dietPlan={dietPlan}
           formData={formData}
@@ -720,7 +596,7 @@ const styles = `
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative">
+    <div className="min-h-screen">
         <style>{styles}</style>
       <BackButton onClick={onBack} />
 

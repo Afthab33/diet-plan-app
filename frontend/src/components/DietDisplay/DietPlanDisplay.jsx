@@ -4,6 +4,7 @@ import NutritionOverview from './NutritionOverview';
 import MealPlanSection from './MealPlanSection';
 import SupplementPlanSection from './SupplementPlanSection';
 import HydrationSection from './HydrationSupplements';
+import WaitlistSection from './WaitlistSection';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronUp, Download, RefreshCcw } from 'lucide-react';
 import { jsPDF } from 'jspdf';
@@ -45,7 +46,7 @@ const DietPlanDisplay = ({ dietPlan, formData, setFormData, userInfo, onReset })
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen">
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         className="fixed bottom-6 right-6 p-3 rounded-full bg-blue-500 text-white shadow-lg hover:bg-blue-600 transition-all duration-300 z-50"
@@ -69,10 +70,10 @@ const DietPlanDisplay = ({ dietPlan, formData, setFormData, userInfo, onReset })
         {/* Meal Plan */}
         <MealPlanSection mealPlan={dietPlan.meal_plan} />
 
-        {/* Supplements Section - now positioned after meal plan */}
+        {/* Supplements Section*/}
         <SupplementPlanSection supplements={formData.supplements || []} />
 
-        {/* Hydration Section - moved after supplements */}
+        {/* Hydration Section*/}
         <HydrationSection 
           weight={formData.weight}
           activityLevel={formData.activity_level}
@@ -99,44 +100,7 @@ const DietPlanDisplay = ({ dietPlan, formData, setFormData, userInfo, onReset })
             </div>
           </CardContent>
         </Card>
-
-        <style jsx global>{`
-          @media print {
-            body {
-              background: white !important;
-              color: black !important;
-            }
-            
-            #diet-plan-content {
-              padding: 20px !important;
-            }
-
-            .no-print {
-              display: none !important;
-            }
-
-            * {
-              color: black !important;
-              text-shadow: none !important;
-              box-shadow: none !important;
-            }
-
-            * {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-            }
-
-            section {
-              break-inside: avoid;
-              margin-bottom: 20px;
-            }
-
-            .card {
-              break-inside: avoid;
-              margin-bottom: 15px;
-            }
-          }
-        `}</style>
+        <WaitlistSection />
       </div>
     </div>
   );

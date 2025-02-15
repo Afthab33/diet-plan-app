@@ -35,7 +35,46 @@ const getFoodEmoji = (foodName) => {
 };
 
 const MealPlanSection = ({ mealPlan = [] }) => {
-  if (!Array.isArray(mealPlan) || mealPlan.length === 0) {
+  // Function to normalize meal plan data
+  const normalizeMealPlan = (rawMealPlan) => {
+    if (!rawMealPlan) return [];
+
+    // Case 1: If it's already an array with the correct structure
+    if (Array.isArray(rawMealPlan) && rawMealPlan.length > 0 && rawMealPlan[0].foods) {
+      return rawMealPlan;
+    }
+
+    // Case 2: If it's an object with meal_plan property
+    if (rawMealPlan.meal_plan) {
+      const mealPlanData = rawMealPlan.meal_plan;
+      
+      // If meal_plan is already an array
+      if (Array.isArray(mealPlanData)) {
+        return mealPlanData;
+      }
+
+      // If meal_plan is an object with meal_1, meal_2 format
+      if (typeof mealPlanData === 'object') {
+        return Object.values(mealPlanData)
+          .filter(meal => meal && meal.foods)
+          .sort((a, b) => (a.meal_number || 0) - (b.meal_number || 0));
+      }
+    }
+
+    // Case 3: If it's a direct object with meal_1, meal_2 format
+    if (typeof rawMealPlan === 'object' && (rawMealPlan.meal_1 || rawMealPlan[1])) {
+      return Object.values(rawMealPlan)
+        .filter(meal => meal && meal.foods)
+        .sort((a, b) => (a.meal_number || 0) - (b.meal_number || 0));
+    }
+
+    return [];
+  };
+
+  // Normalize the meal plan data
+  const normalizedMealPlan = normalizeMealPlan(mealPlan);
+
+  if (normalizedMealPlan.length === 0) {
     return (
       <section className="space-y-6 mt-8">
         <div className="flex items-center justify-between">
@@ -127,6 +166,7 @@ const MealPlanSection = ({ mealPlan = [] }) => {
       <span className="text-sm font-medium text-white">{value}g</span>
     </div>
   );
+
   return (
     <section className="space-y-6 mt-8">
       <div className="flex items-center justify-between">
@@ -169,11 +209,11 @@ const MealPlanSection = ({ mealPlan = [] }) => {
 
       {/* Meal Cards */}
       <div className="space-y-4">
-        {mealPlan.map((meal, index) => {
+        {normalizedMealPlan.map((meal, index) => {
           if (!meal || !meal.foods) return null;
           
           const mealTotals = calculateMealTotals(meal.foods);
-          const timing = getMealTiming(meal.meal_number, mealPlan.length);
+          const timing = getMealTiming(meal.meal_number, normalizedMealPlan.length);
           
           return (
             <Card 
