@@ -7,11 +7,11 @@ import HydrationSection from './HydrationSupplements';
 import WaitlistSection from './WaitlistSection';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronUp, Download, RefreshCcw } from 'lucide-react';
+import { jsPDF } from 'jspdf'
+import html2canvas from 'html2canvas'
 
 const DietPlanDisplay = ({ dietPlan, formData, setFormData, userInfo, onReset }) => {
   const generatePDF = async () => {
-    const { jsPDF } = await import('jspdf');
-    const html2canvas = await import('html2canvas');
     const content = document.getElementById('diet-plan-content');
     if (!content) return;
 
