@@ -621,22 +621,6 @@ const styles = `
       <BackButton onClick={onBack} />
 
       <div className="relative min-h-screen flex flex-col">
-        <header className="py-8 text-center">
-          <div className="flex justify-center items-center mb-4">
-            <div className="relative">
-              <Dumbbell className="w-16 h-16 text-blue-500" />
-              <div className="absolute inset-0 bg-blue-500 filter blur-xl opacity-20 animate-pulse" />
-            </div>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 
-            to-pink-400 bg-clip-text text-transparent">
-            Diet Plan Generator
-          </h1>
-          <p className="mt-4 text-gray-400 max-w-md mx-auto">
-            Personalized nutrition planning designed for your goals
-          </p>
-        </header>
-
         <main className="flex-grow container mx-auto max-w-2xl px-4 py-8">
           {error && (
             <Alert className="mb-6 bg-red-900/50 border-red-500">

@@ -47,7 +47,7 @@ const NutritionOverview = ({ calories, protein, carbs, fats, userInfo }) => {
 
   const MacroCard = ({ title, grams, icon: Icon, color, description, tips }) => (
     <Card className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 border-gray-700/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300">
-      <CardContent className="p-6 space-y-4">
+      <CardContent className="p-4 sm:p-6 space-y-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">
             <div className="p-3 rounded-xl bg-gradient-to-br" style={{ backgroundColor: `${color}15` }}>
@@ -94,24 +94,24 @@ const NutritionOverview = ({ calories, protein, carbs, fats, userInfo }) => {
         initialSection={showLearningCenter}
       />
     )}
-    <section className="space-y-8 mt-8">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">Your Personalized Nutrition Plan</h2>
-        <button
-          onClick={() => setShowLearningCenter('overview')}
-          className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-all duration-300"
-        >
-          <Info className="w-4 h-4" />
-          <span>Learn about nutrition</span>
-        </button>
+    <section className="space-y-8 mt-8 px-4 sm:px-0">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-white">Your Personalized Nutrition Plan</h2>
+          <button
+            onClick={() => setShowLearningCenter('overview')}
+            className="w-full sm:w-auto flex items-center justify-center space-x-2 px-4 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-all duration-300"
+          >
+            <Info className="w-4 h-4" />
+            <span>Learn about nutrition</span>
+          </button>
       </div>
       
       {/*Overview Card */}
       <Card className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 border-gray-700/50">
-        <CardContent className="p-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <CardContent className="p-4 sm:p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
             {/* Calories Section */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
                 <div className="mb-4">
                   <h3 className="text-xl font-semibold text-white">Your Daily Energy Requirements</h3>
@@ -212,16 +212,14 @@ const NutritionOverview = ({ calories, protein, carbs, fats, userInfo }) => {
             </div>
 
             {/*Pie Chart */}
-            <div className="flex items-center justify-center relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-green-500/5 to-pink-500/5 rounded-full blur-2xl" />
-              <div className="relative">
-                <div className="w-52 h-52">
+            <div className="flex flex-col items-center sm:items-start space-y-6 sm:space-y-0">
+              <div className="relative w-full max-w-[250px] sm:w-52 aspect-square">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={macroData}
-                        innerRadius={65}
-                        outerRadius={85}
+                        innerRadius="60%"
+                        outerRadius="80%"
                         paddingAngle={8}
                         dataKey="value"
                       >
@@ -235,16 +233,16 @@ const NutritionOverview = ({ calories, protein, carbs, fats, userInfo }) => {
                       </Pie>
                     </PieChart>
                   </ResponsiveContainer>
-                </div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                  <div className="text-3xl font-bold text-white">
-                    {calories}
-                  </div>
-                  <div className="text-sm text-gray-400">kcal</div>
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+                    <div className="text-2xl sm:text-3xl font-bold text-white">
+                      {calories}
+                    </div>
+                    <div className="text-sm text-gray-400">kcal</div>
                 </div>
               </div>
-              <div className="ml-8">
-                <div className="mb-4">
+
+              <div className="w-full sm:ml-8 mt-6 sm:mt-0">
+                <div className="mb-4 text-center sm:text-left">
                   <h3 className="text-lg font-semibold text-white">Your Daily Nutrient Balance</h3>
                   <p className="text-sm text-gray-400 mt-1">
                     How your daily calories are divided between proteins, carbs, and fats
@@ -278,7 +276,7 @@ const NutritionOverview = ({ calories, protein, carbs, fats, userInfo }) => {
       </Card>
 
       {/* Enhanced Macro Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
       <MacroCard
           title="Protein"
           grams={protein}
@@ -307,13 +305,13 @@ const NutritionOverview = ({ calories, protein, carbs, fats, userInfo }) => {
 
       {/* Additional Education Section */}
       <Card className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 border-gray-700/50">
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           <div className="flex items-center space-x-3 mb-4">
-            <Info className="w-6 h-6 text-blue-400" />
-            <h3 className="text-lg font-semibold text-white">Tips for Success</h3>
+            <Info className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
+            <h3 className="text-base sm:text-lg font-semibold text-white">Tips for Success</h3>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 text-sm">
             <div className="space-y-2">
               <h4 className="text-blue-400 font-medium">Meal Timing</h4>
               <p className="text-gray-300">

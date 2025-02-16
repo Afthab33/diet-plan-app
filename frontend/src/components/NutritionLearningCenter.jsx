@@ -8,13 +8,13 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 
 const StepConnector = ({ isActive, text }) => (
-  <div className="flex flex-col items-center py-4 group">
-    <div className="text-center px-6 py-2 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-200 mb-4 transition-all duration-300 hover:scale-105">
+  <div className="flex flex-col items-center py-4 group w-full">
+    <div className="text-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-200 mb-4 transition-all duration-300 hover:scale-105 text-xs md:text-sm w-11/12">
       <p className={`text-sm ${isActive ? 'text-blue-600' : 'text-gray-600'}`}>
         {text}
       </p>
     </div>
-    <ArrowDown className={`w-6 h-6 text-blue-500 transition-all duration-300 ${
+    <ArrowDown className={`w-5 h-5 md:w-6 md:h-6 text-blue-500 transition-all duration-300 ${
       isActive ? 'animate-bounce' : ''
     }`} />
   </div>
@@ -31,53 +31,50 @@ const ProcessStep = ({
   color = 'blue',
   isActive = false 
 }) => (
-  <div className="group transform transition-all duration-500 hover:scale-102">
-    <Card className={`bg-white shadow-lg transition-all duration-500 hover:shadow-xl ${
+  <div className="group transform transition-all duration-500 hover:scale-102 w-full">
+    <Card className={`bg-white shadow-lg transition-all duration-500 hover:shadow-xl w-full ${
       isActive ? `ring-2 ring-${color}-400 translate-x-2` : ''
     }`}>
-      <CardContent className="p-6">
-        <div className="flex items-start space-x-4">
-          <div className="flex-shrink-0">
-            <div className={`w-10 h-10 rounded-full bg-${color}-50 flex items-center justify-center transition-all duration-300 group-hover:scale-110 ${
+      <CardContent className="p-4 md:p-6">
+        <div className="flex flex-col md:flex-row items-start space-y-4 md:space-y-0 md:space-x-4">
+          <div className="flex-shrink-0 flex items-center">
+            <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full bg-${color}-50 flex items-center justify-center transition-all duration-300 group-hover:scale-110 ${
               isActive ? 'animate-pulse' : ''
             }`}>
-              <span className={`text-${color}-600 font-bold text-lg`}>{number}</span>
+              <span className={`text-${color}-600 font-bold text-sm md:text-lg`}>{number}</span>
             </div>
           </div>
           
-          <div className="flex-1 space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Icon className={`w-6 h-6 text-${color}-500 transition-all duration-300 ${
+          <div className="flex-1 space-y-3 md:space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Icon className={`w-5 h-5 md:w-6 md:h-6 text-${color}-500 transition-all duration-300 ${
                   isActive ? 'animate-spin-slow' : ''
                 }`} />
-                <h3 className="text-xl font-bold text-gray-800">{title}</h3>
+                <h3 className="text-lg md:text-xl font-bold text-gray-800">{title}</h3>
               </div>
               {isActive && (
-                <div className={`text-${color}-500 flex items-center gap-2`}>
-                  <Sparkles className="w-5 h-5 animate-pulse" />
-                  <span className="text-sm font-medium">We are here!</span>
+                <div className={`text-${color}-500 flex items-center gap-2 text-sm md:text-base`}>
+                  <Sparkles className="w-4 h-4 md:w-5 md:h-5 animate-pulse" />
+                  <span>We are here!</span>
                 </div>
               )}
             </div>
-
-            <p className="text-gray-600 leading-relaxed text-lg">
+            <p className="text-gray-600 leading-relaxed text-sm md:text-lg">
               {description}
             </p>
-
-            <div className={`p-4 rounded-xl bg-${color}-50 border border-${color}-100 transition-all duration-300 group-hover:shadow-md`}>
-              <div className={`text-sm font-semibold text-${color}-600 mb-2`}>Magic Formula ✨</div>
-              <div className="font-mono text-sm text-blue-600 bg-white p-3 rounded-lg shadow-inner">
+            <div className={`p-3 md:p-4 rounded-xl bg-${color}-50 border border-${color}-100 transition-all duration-300 group-hover:shadow-md text-sm md:text-base`}>
+              <div className={`font-semibold text-${color}-600 mb-1 md:mb-2`}>Magic Formula ✨</div>
+              <div className="font-mono text-xs md:text-sm text-blue-600 bg-white p-2 md:p-3 rounded-lg shadow-inner">
                 {formula}
               </div>
-              <div className="mt-3 text-gray-600 space-y-2">
+              <div className="mt-2 md:mt-3 text-gray-600 space-y-1 md:space-y-2">
                 {explanation}
               </div>
             </div>
-
             {example && (
-              <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 group-hover:shadow-md transition-all duration-300">
-                <div className="text-sm font-semibold text-gray-700 mb-2">Let's see it in action! 🚀</div>
+              <div className="p-3 md:p-4 rounded-xl bg-gray-50 border border-gray-200 group-hover:shadow-md transition-all duration-300 text-sm md:text-base">
+                <div className="font-semibold text-gray-700 mb-1 md:mb-2">Let's see it in action! 🚀</div>
                 <div className="text-gray-600">
                   {example}
                 </div>
@@ -112,42 +109,40 @@ const NutritionLearningCenter = ({ onClose }) => {
   }, [isPlaying]);
 
   return (
-    <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
-      {/* Animated Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent)]" />
+    <div className="fixed inset-0 bg-white z-50 overflow-y-auto px-4 md:px-0">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent)] pointer-events-none" />
       </div>
 
-      {/* Control Buttons */}
-      <div className="fixed top-4 right-4 flex items-center space-x-4">
+      <div className="fixed top-4 right-4 flex items-center space-x-4 z-[999]">
         <button
           onClick={() => setIsPlaying(!isPlaying)}
           className="p-2 rounded-full bg-white shadow-lg text-blue-500 hover:text-blue-600 transition-all duration-300 hover:scale-110"
         >
           {isPlaying ? 
-            <PauseCircle className="w-8 h-8" /> : 
-            <PlayCircle className="w-8 h-8" />
+            <PauseCircle className="w-6 h-6 md:w-8 md:h-8" /> : 
+            <PlayCircle className="w-6 h-6 md:w-8 md:h-8" />
           }
         </button>
         <button
           onClick={onClose}
           className="p-2 rounded-full bg-white shadow-lg text-gray-500 hover:text-gray-600 transition-all duration-300 hover:scale-110"
         >
-          <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-12 relative">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 shadow-md hover:shadow-lg transition-all duration-300 animate-bounce">
-            <Calculator className="w-6 h-6 text-blue-500" />
-            <span className="text-blue-600 font-medium text-lg">Your Nutrition Journey</span>
+      <div className="max-w-4xl mx-auto py-12 relative">
+        <div className="text-center mb-8 md:mb-12">
+          <div className="inline-flex items-center space-x-2 px-4 py-2 md:px-6 md:py-3 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 shadow-md hover:shadow-lg transition-all duration-300 animate-bounce text-sm md:text-lg">
+            <Calculator className="w-5 h-5 md:w-6 md:h-6 text-blue-500" />
+            <span className="text-blue-600 font-medium">Your Nutrition Journey</span>
           </div>
           
-          <h1 className="text-5xl font-bold text-gray-800 mt-6 mb-4">
+          <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mt-4 md:mt-6 mb-2 md:mb-4">
             Let's See How We Create Your Perfect
             <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent"> Diet Plan</span>
           </h1>

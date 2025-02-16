@@ -185,21 +185,6 @@ const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {
         </div>
         </div>
       </div>
-
-      <div className="flex items-center space-x-3">
-        <div className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20">
-          <Brain className="w-5 h-5 text-blue-400" />
-          <span className="text-blue-400 font-medium">Want to know how we generate AI based diet plan?</span>
-            <ArrowRight className="w-4 h-4 text-purple-400 group-hover:translate-x-1 transition-transform duration-300" />
-        </div>
-        
-        <button
-          onClick={() => onShowNutritionGuide()}
-          className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-500/20 transition-all duration-300 group"
-        >
-          <span className="text-purple-400 font-medium">Learn Now</span>
-        </button>
-      </div>
     </div>
   </div>
 </header>
@@ -236,7 +221,7 @@ const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {
 
           {/* CTA Button */}
           <div className="relative inline-block group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-glow" />
             <button
               onClick={onGetStarted}
               className="relative px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full font-medium text-white text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20"
@@ -267,6 +252,23 @@ const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {
               </div>
             ))}
           </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 mt-16">
+          <div className="flex flex-col items-center text-center space-y-4">
+            <div className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20">
+              <Brain className="w-5 h-5 text-blue-400" />
+              <span className="text-blue-400 font-medium">Want to know how we generate AI based diet plan?</span>
+              <ArrowRight className="w-4 h-4 text-purple-400 group-hover:translate-x-1 transition-transform duration-300" />
+            </div>
+            
+            <button
+              onClick={() => onShowNutritionGuide()}
+              className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-500/20 transition-all duration-300 group"
+            >
+              <span className="text-purple-400 font-medium">Learn Now</span>
+            </button>
+          </div>
+        </div>
         </div>
       </div>
 
@@ -293,8 +295,25 @@ const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {
     }
   }
 
+  /* NEW: glowing effect keyframe */
+  @keyframes glow {
+    0%, 100% {
+      opacity: 0.3;
+      box-shadow: 0 0 10px rgba(59,130,246, 0.8), 0 0 30px rgba(59,130,246, 0.6);
+    }
+    50% {
+      opacity: 0.6;
+      box-shadow: 0 0 20px rgba(59,130,246, 1), 0 0 60px rgba(59,130,246, 0.8);
+    }
+  }
+
   .animate-pulse-slow {
     animation: pulse-slow 4s ease-in-out infinite;
+  }
+
+  /* NEW: attach the keyframe */
+  .animate-glow {
+    animation: glow 2.5s infinite ease-in-out;
   }
 
   @media (max-width: 640px) {
