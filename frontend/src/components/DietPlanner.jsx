@@ -401,8 +401,8 @@ const ErrorDisplay = ({ error, onRetry, onBack }) => (
       // Generating API payload
       const apiPayload = generateApiPayload(nutritionData, formData);
   
-      // Getting meal plan from backend
-      const response = await fetch("http://127.0.0.1:8000/api/generate-diet/", {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${API_URL}/api/generate-diet/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(apiPayload)

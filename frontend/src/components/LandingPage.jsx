@@ -5,7 +5,6 @@ import {
   Code, Linkedin, Apple, Trophy, Target, ArrowDown
 } from 'lucide-react';
 import profileImage from '/Users/aftab/Projects/diet-app/frontend/src/assets/images/profileImage.jpg';
-import { Link } from 'react-router-dom';
 import openAiLogo from '../assets/openai-logo.svg';
 
 const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {

@@ -1,18 +1,12 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "watch": "vite build --watch",
     "preview": "vite preview"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.1",
     "@vitejs/plugin-react": "^4.3.4",
