@@ -44,6 +44,7 @@ const DietPlanner = ({ onBack }) => {
   const [weightUnit, setWeightUnit] = useState('kg');
   const [heightUnit, setHeightUnit] = useState('ft');
   const [isDietPreferencesValid, setIsDietPreferencesValid] = useState(false);
+  const [displayWeight, setDisplayWeight] = useState('');
   
   const [fieldErrors, setFieldErrors] = useState({
     gender: '',
@@ -100,41 +101,42 @@ const DietPlanner = ({ onBack }) => {
 
 
     if (field === 'weight') {
-        const numValue = value.replace(/\D/g, '');
-        // Convert the weight to kg before storing if input is in lbs
-        const weightInKg = weightUnit === 'lbs' ? 
-          convertWeight(numValue, 'lbs', 'kg') : 
-          numValue;
-        
-        setFormData(prev => ({
-          ...prev,
-          [field]: weightInKg
-        }));
-        return;
-      }
+      if (!/^\d*\.?\d*$/.test(value)) return;
+      setDisplayWeight(value);
+      const weightInKg = weightUnit === 'lbs' ? 
+        (parseFloat(value) / 2.20462).toFixed(1) : 
+        value;
+      
+      setFormData(prev => ({
+        ...prev,
+        weight: weightInKg
+      }));
+      return;
+    }
 
-      if (field === 'height_cm') {
-        const numValue = value.replace(/\D/g, '');
+    if (field === 'height_cm') {
+      const regex = /^\d*\.?\d*$/;
+      if (value === '' || regex.test(value)) {
         setFormData(prev => ({
           ...prev,
-          height_cm: numValue,
+          height_cm: value,
           height_feet: '',
           height_inches: ''
         }));
-        return;
       }
+      return;
+    }
     
-      if (field === 'height_feet' || field === 'height_inches') {
-        const numValue = value.replace(/\D/g, '');
-        setFormData(prev => ({
-          ...prev,
-          [field]: numValue,
-          height_cm: ''
-        }));
-        return;
-      }
+    if (field === 'height_feet' || field === 'height_inches') {
+      const numValue = value.replace(/\D/g, '');
+      setFormData(prev => ({
+        ...prev,
+        [field]: numValue,
+        height_cm: ''
+      }));
+      return;
+    }
   
-    // For numeric inputs
     const numericValue = value.replace(/\D/g, '');
     setFormData(prev => ({
       ...prev,
@@ -142,16 +144,33 @@ const DietPlanner = ({ onBack }) => {
     }));
   };
 
+  const handleWeightUnitChange = (newUnit) => {
+    if (displayWeight) {
+      if (newUnit === 'lbs' && weightUnit === 'kg') {
+        // Converting from kg to lbs
+        const lbsValue = (parseFloat(displayWeight) * 2.20462).toFixed(1);
+        setDisplayWeight(lbsValue);
+      } else if (newUnit === 'kg' && weightUnit === 'lbs') {
+        // Converting from lbs to kg
+        const kgValue = (parseFloat(displayWeight) / 2.20462).toFixed(1);
+        setDisplayWeight(kgValue);
+      }
+    }
+    setWeightUnit(newUnit);
+  };
+
   const convertWeight = (value, from, to) => {
     if (!value) return '';
     const numValue = parseFloat(value);
+    if (isNaN(numValue)) return '';
+    
     if (from === 'kg' && to === 'lbs') {
-      return Math.round(numValue * 2.20462);
+      return (numValue * 2.20462).toFixed(1);
     }
     if (from === 'lbs' && to === 'kg') {
-      return Math.round(numValue / 2.20462);
+      return (numValue / 2.20462).toFixed(1);
     }
-    return numValue;
+    return value;
   };
 
   const convertHeight = {
@@ -450,61 +469,63 @@ const styles = `
         <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700">
           <CardContent className="p-6">
           {step.fields.includes('age') && (
-  <BasicInfo 
-  formData={formData}
-  fieldErrors={fieldErrors}
-  handleInputChange={handleInputChange}
-  weightUnit={weightUnit}
-  setWeightUnit={setWeightUnit}
-  convertWeight={convertWeight}
-  heightUnit={heightUnit}
-  setHeightUnit={setHeightUnit}
-  convertHeight={convertHeight}
-/>
-)}
+            <BasicInfo 
+            formData={formData}
+            fieldErrors={fieldErrors}
+            handleInputChange={handleInputChange}
+            weightUnit={weightUnit}
+            setWeightUnit={setWeightUnit}
+            convertWeight={convertWeight}
+            heightUnit={heightUnit}
+            setHeightUnit={setHeightUnit}
+            convertHeight={convertHeight}
+            displayWeight={displayWeight}
+            setDisplayWeight={setDisplayWeight}
+          />
+          )}
 
-{step.fields.includes('activity_level') && (
-  <ActivityLevel 
-  formData={formData}
-  fieldErrors={fieldErrors}
-  handleInputChange={handleInputChange}
-  activityLevels={activityLevels}
-/>
-)}
+          {step.fields.includes('activity_level') && (
+            <ActivityLevel 
+            formData={formData}
+            fieldErrors={fieldErrors}
+            handleInputChange={handleInputChange}
+            activityLevels={activityLevels}
+          />
+          )}
 
-{step.fields.includes('goal') && (
-  <Goals 
-  formData={formData}
-  handleInputChange={handleInputChange}
-  goals={goals}
-/>
-)}
+          {step.fields.includes('goal') && (
+            <Goals 
+            formData={formData}
+            handleInputChange={handleInputChange}
+            goals={goals}
+          />
+          )}
 
-{step.fields.includes('diet_type') && (
-  <DietPreferences 
-  formData={formData}
-  handleInputChange={handleInputChange}
-  handleCuisineToggle={handleCuisineToggle}
-  handleFoodRestrictionToggle={handleFoodRestrictionToggle}
-  handleAllergyToggle={handleAllergyToggle}
-  dietTypes={dietTypes}
-  cuisines={cuisines}
-  mealsPerDay={mealsPerDay}
-  onValidationChange={setIsDietPreferencesValid}
-/>
-)}
+          {step.fields.includes('diet_type') && (
+            <DietPreferences 
+            formData={formData}
+            handleInputChange={handleInputChange}
+            handleCuisineToggle={handleCuisineToggle}
+            handleFoodRestrictionToggle={handleFoodRestrictionToggle}
+            handleAllergyToggle={handleAllergyToggle}
+            dietTypes={dietTypes}
+            cuisines={cuisines}
+            mealsPerDay={mealsPerDay}
+            onValidationChange={setIsDietPreferencesValid}
+          />
+          )}
 
-{step.fields.includes('supplements') && (
-  <Supplements 
-  formData={formData}
-  handleSupplementToggle={handleSupplementToggle}
-  showSupplements={showSupplements}
-  setShowSupplements={setShowSupplements}
-  supplements={supplements}
-/>
-)}
-</CardContent>
-</Card>
+          {step.fields.includes('supplements') && (
+            <Supplements 
+            formData={formData}
+            handleSupplementToggle={handleSupplementToggle}
+            showSupplements={showSupplements}
+            setShowSupplements={setShowSupplements}
+            supplements={supplements}
+          />
+          )}
+      </CardContent>
+      </Card>
 
         <div className="mt-6 flex justify-between items-center">
           <button
@@ -684,7 +705,7 @@ const styles = `
         </div>
       )}
 
-      <style jsx global>{`
+      <style>{`
         @keyframes gradient {
           0% { background-position: 0% 50%; }
           100% { background-position: 100% 50%; }
@@ -694,7 +715,7 @@ const styles = `
   );
 };
 
-<style jsx global>{`
+<style>{`
   @keyframes gradient {
     0% { background-position: 0% 50%; }
     100% { background-position: 100% 50%; }

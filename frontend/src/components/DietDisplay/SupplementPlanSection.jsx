@@ -70,7 +70,7 @@ const SupplementPlanSection = ({ supplements = [] }) => {
       icon: Package,
       color: "yellow"
     },
-    multivitamin: {
+    vitamins: {
       name: "Multivitamin",
       timing: "With breakfast or first meal",
       dosage: "1 tablet daily",

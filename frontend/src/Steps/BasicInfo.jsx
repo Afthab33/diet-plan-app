@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check } from 'lucide-react';
+import { Check, User} from 'lucide-react';
 
 const BasicInfo = ({ 
   formData, 
@@ -10,61 +10,109 @@ const BasicInfo = ({
   convertWeight,
   heightUnit,
   setHeightUnit,
-  convertHeight
+  convertHeight,
+  displayWeight,
+  setDisplayWeight 
 }) => {
   return (
     <div className="space-y-6">
     {/* Gender Selection Card */}
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 p-6 backdrop-blur-xl border border-gray-700/50">
-      <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-all duration-500" />
-      
-      <div className="relative z-10 space-y-6">
-        {/* Header */}
-        <div className="flex items-center space-x-4">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-violet-500/20 to-purple-500/20">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
+    <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 p-6 backdrop-blur-xl border border-gray-700/50">
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-all duration-500" />
+        
+        <div className="relative z-10 space-y-4">
+          {/* Header */}
+          <div className="flex items-center space-x-3">
+            <div className="p-2 rounded-lg bg-indigo-500/20">
+              <User className="h-5 w-5 text-indigo-400" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-200">Gender</label>
+              <p className="text-xs text-gray-400">Select your gender for accurate calculations</p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white">Gender</h3>
-            <p className="text-sm text-gray-400">Select your gender for personalized recommendations</p>
-          </div>
-        </div>
 
-        {/* Gender Buttons */}
-        <div className="grid grid-cols-2 gap-4">
-          {[
-            { id: 'male', icon: '👨', label: 'Male', gradient: 'from-blue-500/20 to-blue-600/20', hoverGradient: 'hover:from-blue-500/30 hover:to-blue-600/30' },
-            { id: 'female', icon: '👩', label: 'Female', gradient: 'from-pink-500/20 to-purple-500/20', hoverGradient: 'hover:from-pink-500/30 hover:to-purple-500/30' }
-          ].map((gender) => (
-            <button
-              key={gender.id}
-              onClick={() => handleInputChange('gender', gender.id)}
-              className={`
-                relative group/button overflow-hidden rounded-xl p-5 transition-all duration-300 hover:scale-[1.02]
-                ${formData.gender === gender.id 
-                  ? `bg-gradient-to-br ${gender.gradient} ring-2 ring-${gender.id === 'male' ? 'blue' : 'pink'}-500/50` 
-                  : `bg-gray-800/50 ${gender.hoverGradient}`}
-              `}
-            >
-              <div className="relative z-10 flex flex-col items-center space-y-3">
-                <span className="text-4xl transform transition-transform duration-300 group-hover/button:scale-110">
-                  {gender.icon}
-                </span>
-                <span className="font-medium text-white">{gender.label}</span>
-              </div>
-              {formData.gender === gender.id && (
-                <div className="absolute top-2 right-2 flex items-center space-x-1">
-                  <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-                  <span className="text-xs text-blue-400">Selected</span>
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { 
+                id: 'male', 
+                label: 'Male',
+                icon: '👨',
+                gradient: 'from-blue-500/20 to-indigo-500/20',
+                hoverGradient: 'hover:from-blue-500/30 hover:to-indigo-500/30',
+                activeColor: 'blue'
+              },
+              { 
+                id: 'female', 
+                label: 'Female',
+                icon: '👩',
+                gradient: 'from-pink-500/20 to-purple-500/20',
+                hoverGradient: 'hover:from-pink-500/30 hover:to-purple-500/30',
+                activeColor: 'pink'
+              }
+            ].map((gender) => (
+              <button
+                key={gender.id}
+                onClick={() => handleInputChange('gender', gender.id)}
+                className={`
+                  relative group/button overflow-hidden rounded-xl p-6
+                  transition-all duration-300 hover:scale-[1.02]
+                  ${formData.gender === gender.id 
+                    ? `bg-gradient-to-br ${gender.gradient} ring-2 ring-${gender.activeColor}-500` 
+                    : `bg-gray-700/50 ${gender.hoverGradient}`}
+                `}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover/button:opacity-100 transition-all duration-300" />
+                
+                <div className="relative z-10 flex flex-col items-center space-y-3">
+                  <div className={`
+                    p-3 rounded-full 
+                    ${formData.gender === gender.id 
+                      ? `bg-${gender.activeColor}-500/20` 
+                      : 'bg-gray-600/50'}
+                    transition-all duration-300
+                    group-hover/button:scale-110
+                  `}>
+                    <span className="text-4xl transform transition-transform duration-300 group-hover/button:scale-110">
+                      {gender.icon}
+                    </span>
+                  </div>
+                  
+                  <span className={`
+                    font-medium text-base
+                    ${formData.gender === gender.id 
+                      ? 'text-white' 
+                      : 'text-gray-400'}
+                    transition-colors duration-300
+                  `}>
+                    {gender.label}
+                  </span>
                 </div>
-              )}
-            </button>
-          ))}
+
+                {formData.gender === gender.id && (
+                  <div className="absolute top-3 right-3">
+                    <div className={`
+                      p-1 rounded-full bg-${gender.activeColor}-500/20
+                    `}>
+                      <Check className={`w-4 h-4 text-${gender.activeColor}-400`} />
+                    </div>
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Error Message */}
+          {fieldErrors.gender && (
+            <div className="flex items-center space-x-2 text-red-400 text-sm mt-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{fieldErrors.gender}</span>
+            </div>
+          )}
         </div>
       </div>
-    </div>
 
     {/* Personal Details Grid */}
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -135,41 +183,44 @@ const BasicInfo = ({
 
       {/* Unit Toggle */}
       <div className="flex items-center bg-gray-700/50 rounded-lg p-1">
-        {['kg', 'lbs'].map((unit) => (
-          <button
-            key={unit}
-            onClick={() => {
-              if (formData.weight) {
-                // Convert the current weight to the new unit for display
-                const converted = convertWeight(formData.weight, weightUnit, unit);
-                setFormData(prev => ({
-                  ...prev,
-                  weight: converted
-                }));
-              }
-              setWeightUnit(unit);
-            }}
-            className={`
-              px-3 py-1 rounded-md text-sm font-medium transition-all duration-300
-              ${weightUnit === unit 
-                ? 'bg-emerald-500/20 text-emerald-400' 
-                : 'text-gray-400 hover:text-white'}
-            `}
-          >
-            {unit.toUpperCase()}
-          </button>
-        ))}
+      {['kg', 'lbs'].map((unit) => (
+        <button
+          key={unit}
+          onClick={() => {
+            if (displayWeight) {
+              const newValue = weightUnit === 'kg' && unit === 'lbs' 
+                ? (parseFloat(displayWeight) * 2.20462).toFixed(1)
+                : weightUnit === 'lbs' && unit === 'kg'
+                ? (parseFloat(displayWeight) / 2.20462).toFixed(1)
+                : displayWeight;
+              setDisplayWeight(newValue);
+            }
+            setWeightUnit(unit);
+          }}
+          className={`
+            px-3 py-1 rounded-md text-sm font-medium transition-all duration-300
+            ${weightUnit === unit 
+              ? 'bg-emerald-500/20 text-emerald-400' 
+              : 'text-gray-400 hover:text-white'}
+          `}
+        >
+          {unit.toUpperCase()}
+        </button>
+      ))}
       </div>
     </div>
 
     <div className="space-y-2">
-      <input
-        type="number"
-        value={weightUnit === 'lbs' ? convertWeight(formData.weight, 'kg', 'lbs') : formData.weight}
-        onChange={(e) => handleInputChange('weight', e.target.value)}
+    <input
+        type="text"
+        value={displayWeight}
+        onChange={(e) => {
+          const value = e.target.value;
+          if (!/^\d*\.?\d*$/.test(value)) return;
+          setDisplayWeight(value);
+          handleInputChange('weight', value);
+        }}
         placeholder={`Enter weight in ${weightUnit}`}
-        min={weightUnit === 'kg' ? "30" : "66"}
-        max={weightUnit === 'kg' ? "300" : "660"}
         className={`
           w-full px-4 py-3 rounded-xl bg-gray-700/50 border-2 
           focus:ring-2 focus:ring-emerald-500/50 focus:border-transparent 
@@ -196,7 +247,6 @@ const BasicInfo = ({
 </div>
     </div>
 
-    {/* Height Input */}
     {/* Height Input */}
 <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 p-6 backdrop-blur-xl border border-gray-700/50">
   <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-all duration-500" />
@@ -299,11 +349,12 @@ const BasicInfo = ({
       <div className="space-y-2">
         <input
           type="number"
+          step="0.1"
           value={formData.height_cm}
           onChange={(e) => handleInputChange('height_cm', e.target.value)}
           placeholder="Enter height in cm"
-          min="91"  // 3 feet in cm
-          max="243" // 8 feet in cm
+          min="91"
+          max="243"
           className={`
             w-full px-4 py-3 rounded-xl bg-gray-700/50 border-2 
             focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent 

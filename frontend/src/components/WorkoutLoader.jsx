@@ -69,14 +69,71 @@ const WorkoutLoader = () => {
   return (
     <div className="fixed inset-0 bg-gray-900/90 backdrop-blur-lg flex items-center justify-center z-50">
 
-      {/* Animated Background */}
-      <div className="absolute inset-0 overflow-hidden">
+<div className="absolute inset-0 overflow-hidden">
+        {/* Base gradient layer */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 animate-pulse" />
+        
+        {/* Floating particles */}
+        {[...Array(50)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full animate-float-particle"
+            style={{
+              width: Math.random() * 4 + 2 + 'px',
+              height: Math.random() * 4 + 2 + 'px',
+              background: `rgba(${Math.random() * 255}, ${Math.random() * 255}, 255, ${Math.random() * 0.3})`,
+              left: Math.random() * 100 + '%',
+              top: Math.random() * 100 + '%',
+              animationDuration: Math.random() * 3 + 2 + 's',
+              animationDelay: Math.random() * 2 + 's'
+            }}
+          />
+        ))}
+
+        {/* Animated gradient circles */}
+        <div className="absolute inset-0">
+          {[...Array(3)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute inset-0 animate-pulse-slow"
+              style={{
+                background: `radial-gradient(circle at ${50 + Math.sin(i * Math.PI / 3) * 30}% ${50 + Math.cos(i * Math.PI / 3) * 30}%, rgba(${i * 80}, 100, 255, 0.1), transparent)`,
+                animationDelay: `${i * 0.5}s`
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Moving light beams */}
+        <div className="absolute inset-0">
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute h-full w-1 animate-light-beam"
+              style={{
+                background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.1), transparent)',
+                left: `${i * 25}%`,
+                animationDelay: `${i * 0.2}s`
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Glowing mesh grid */}
         <div 
-          className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent)] animate-spin-slow"
-          style={{ transform: `rotate(${particleCount * 2}deg)` }}
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+            backgroundSize: '20px 20px',
+            animation: 'grid-move 20s linear infinite'
+          }}
         />
+
+        {/* Subtle vignette */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-transparent to-black/20" />
       </div>
+
+      
       <div className="relative bg-gray-800/90 rounded-2xl p-8 max-w-lg w-full mx-4 shadow-2xl border border-gray-700/50 backdrop-blur-xl">
         {/* 3D Scene Container */}
         <div className="w-full h-64 perspective-1000 mb-8">
