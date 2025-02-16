@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import DietPlanner from './DietPlanner';
 import LandingPage from './LandingPage';
 import ThemedBackground from './ThemedBackground';
-import DataFlowGuide from './NutritionLearningCenter';
+import NutritionLearningCenter from './NutritionLearningCenter';
 
 const AppWrapper = () => {
   const [showForm, setShowForm] = useState(false);
@@ -54,7 +54,7 @@ const AppWrapper = () => {
 
         {/* DataFlowGuide Overlay */}
         {showNutritionGuide && (
-          <DataFlowGuide onClose={handleCloseNutritionGuide} />
+          <NutritionLearningCenter onClose={handleCloseNutritionGuide} />
         )}
       </div>
     </ThemedBackground>

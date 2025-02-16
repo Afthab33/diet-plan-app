@@ -12,9 +12,11 @@ import {
   ChevronRight,
   ArrowRight
 } from 'lucide-react';
+import NutritionLearningCenter from '../NutritionLearningCenter';
 
 const NutritionOverview = ({ calories, protein, carbs, fats, userInfo }) => {
   const [showMacroInfo, setShowMacroInfo] = React.useState(false);
+  const [showLearningCenter, setShowLearningCenter] = React.useState(null);
   
   const macroData = [
     { name: 'Protein', value: protein * 4, color: '#3B82F6', grams: protein },
@@ -85,11 +87,18 @@ const NutritionOverview = ({ calories, protein, carbs, fats, userInfo }) => {
   const activityMultiplier = getActivityMultiplier(userInfo.activity_level);
 
   return (
+    <>
+    {showLearningCenter && (
+      <NutritionLearningCenter 
+        onClose={() => setShowLearningCenter(null)}
+        initialSection={showLearningCenter}
+      />
+    )}
     <section className="space-y-8 mt-8">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-white">Your Personalized Nutrition Plan</h2>
         <button
-          onClick={() => window.open('/nutrition-guide', '_blank')}
+          onClick={() => setShowLearningCenter('overview')}
           className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-all duration-300"
         >
           <Info className="w-4 h-4" />
@@ -191,7 +200,7 @@ const NutritionOverview = ({ calories, protein, carbs, fats, userInfo }) => {
               </div>
 
               <button
-                onClick={() => window.open('/calorie-guide', '_blank')}
+                onClick={() => setShowLearningCenter('calories')}
                 className="w-full flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 hover:from-blue-500/20 hover:to-purple-500/20 border border-blue-500/20 transition-all duration-300 group"
               >
                 <div className="flex items-center space-x-2 text-blue-400">
@@ -262,14 +271,6 @@ const NutritionOverview = ({ calories, protein, carbs, fats, userInfo }) => {
                     <span className="block mt-1 text-pink-400">Fats</span> support hormone function and vitamin absorption
                   </p>
                 </div>
-
-                <button
-                  onClick={() => window.open('/macro-guide', '_blank')}
-                  className="mt-4 flex items-center space-x-2 text-sm text-blue-400 hover:text-blue-300 transition-colors duration-300"
-                >
-                  <span>How macros are calculated</span>
-                  <ChevronRight className="w-4 h-4" />
-                </button>
               </div>
             </div>
           </div>
@@ -340,6 +341,7 @@ const NutritionOverview = ({ calories, protein, carbs, fats, userInfo }) => {
         </CardContent>
       </Card>
     </section>
+    </>
   );
 };
 

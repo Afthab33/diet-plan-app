@@ -1,70 +1,74 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Dumbbell, Brain, Calculator, Heart,
-  Check, Bot, AlertCircle, RefreshCcw, 
-  Activity, Target, Apple, Trophy, 
-  ChevronRight, X 
+  UtensilsCrossed, Scale, Brain, Calculator, 
+  Clock, Sparkles, Apple, Dumbbell, Salad,
+  Heart, Target
 } from 'lucide-react';
 
 const WorkoutLoader = () => {
-  const [repCount, setRepCount] = useState(0);
-  const [weightLoss, setWeightLoss] = useState(105);
-  const [particleCount, setParticleCount] = useState(0);
-  const maxReps = 10;
+  const [rotationAngle, setRotationAngle] = useState(0);
+  const [progressStep, setProgressStep] = useState(0);
+  const maxSteps = 4;
 
-  const loadingMessages = [
-    "Meet Aftab: The developer who coded his way to fitness💻💪",
-    "Fun fact: Lost 35kg while mastering Full Stack Development 🎯",
-    "Powered by React and approved by a real Doctor (my brother!) 👨‍⚕️",
-    "From 105kg to 70kg: Same guy, less bytes 😄",
-    "Loading fitness tips from my viral transformation story... 📈",
-    "Mixing algorithms with dumbbells since 2019 🏋️‍♂️",
-    "Warning: Side effects include job offers and weight loss 💼",
-    "OpenToWork and OpenToWorkout: Story of a tech transformation 🚀",
-    "Join 10,000+ people on my fitness + tech journey! 🎥",
-    "Fun fact: I lost weight faster than my code compiles 😅",
-    "Building apps & building muscles: Full Stack Transformation 💪",
-    "PS: Check out my journey on LinkedIn & YouTube! 🎯"
+  // Items that will orbit in 3D space
+  const orbitItems = [
+    { icon: '🥗', name: 'Salad', color: 'green', radius: 80, speed: 1 },
+    { icon: '🍎', name: 'Apple', color: 'red', radius: 80, speed: 0.8 },
+    { icon: '🥑', name: 'Avocado', color: 'green', radius: 80, speed: 1.2 },
+    { icon: '💪', name: 'Strength', color: 'blue', radius: 80, speed: 0.9 },
+    { icon: '🏋️', name: 'Workout', color: 'purple', radius: 80, speed: 1.1 },
+    { icon: '🥩', name: 'Protein', color: 'red', radius: 80, speed: 0.7 },
+    { icon: '🥛', name: 'Dairy', color: 'white', radius: 80, speed: 1.3 },
+    { icon: '🎯', name: 'Goal', color: 'yellow', radius: 80, speed: 1 }
   ];
 
-  const achievements = [
-    { icon: Target, text: "105kg → 70kg", color: "text-green-400" },
-    { icon: Brain, text: "Full Stack Dev", color: "text-blue-400" },
-    { icon: Heart, text: "Content Creator", color: "text-red-400" },
-    { icon: Activity, text: "Fitness Journey", color: "text-yellow-400" },
-    { icon: Trophy, text: "OpenToWork", color: "text-cyan-400" },
-    { icon: Apple, text: "Doctor Approved", color: "text-pink-400" }
+  const loadingSteps = [
+    {
+      icon: Brain,
+      title: "Analyzing Your Profile",
+      description: "Calculating optimal nutritional needs based on your goals",
+      color: "from-blue-500 to-purple-500"
+    },
+    {
+      icon: Calculator,
+      title: "Crafting Your Macros",
+      description: "Balancing proteins, carbs, and healthy fats",
+      color: "from-purple-500 to-pink-500"
+    },
+    {
+      icon: UtensilsCrossed,
+      title: "Designing Meal Plan",
+      description: "Creating delicious and nutritious combinations",
+      color: "from-pink-500 to-orange-500"
+    },
+    {
+      icon: Clock,
+      title: "Optimizing Timeline",
+      description: "Scheduling perfect meal timings for your lifestyle",
+      color: "from-orange-500 to-yellow-500"
+    }
   ];
-
-  const [messageIndex, setMessageIndex] = useState(0);
-  const [achievementIndex, setAchievementIndex] = useState(0);
 
   useEffect(() => {
-    const intervals = [
-      setInterval(() => setRepCount(prev => (prev + 1) % (maxReps + 1)), 1000),
-      setInterval(() => setMessageIndex(prev => (prev + 1) % loadingMessages.length), 3000),
-      setInterval(() => setAchievementIndex(prev => (prev + 1) % achievements.length), 2000),
-      setInterval(() => setParticleCount(prev => prev + 1), 200),
-      setInterval(() => {
-        setWeightLoss(prev => {
-          if (prev > 70) return prev - 1;
-          return 105;
-        });
-      }, 100)
-    ];
+    // Rotate the orbit
+    const rotationInterval = setInterval(() => {
+      setRotationAngle(prev => (prev + 1) % 360);
+    }, 50);
 
-    return () => intervals.forEach(clearInterval);
+    // Progress through steps
+    const progressInterval = setInterval(() => {
+      setProgressStep(prev => (prev + 1) % (maxSteps + 1));
+    }, 3000);
+
+    return () => {
+      clearInterval(rotationInterval);
+      clearInterval(progressInterval);
+    };
   }, []);
 
-  const Achievement = ({ icon: Icon, text, color }) => (
-    <div className={`flex items-center space-x-2 ${color} animate-bounce px-4 py-2 rounded-xl bg-gray-800/50 backdrop-blur-sm border border-gray-700/50`}>
-      <Icon className="w-5 h-5" />
-      <span className="font-semibold">{text}</span>
-    </div>
-  );
-
   return (
-    <div className="fixed inset-0 bg-gray-900/80 backdrop-blur-lg flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gray-900/90 backdrop-blur-lg flex items-center justify-center z-50">
+
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 animate-pulse" />
@@ -73,81 +77,118 @@ const WorkoutLoader = () => {
           style={{ transform: `rotate(${particleCount * 2}deg)` }}
         />
       </div>
-
-      <div className="relative bg-gray-800/90 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl border border-gray-700/50 backdrop-blur-xl">
-        {/* Glowing Corner Accents */}
-        <div className="absolute top-0 left-0 w-20 h-20 bg-gradient-to-br from-blue-500/20 to-transparent rounded-tl-2xl" />
-        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-purple-500/20 to-transparent rounded-tr-2xl" />
-        <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-green-500/20 to-transparent rounded-bl-2xl" />
-        <div className="absolute bottom-0 right-0 w-20 h-20 bg-gradient-to-tl from-pink-500/20 to-transparent rounded-br-2xl" />
-
-        {/* Weight Loss Animation */}
-        <div className="relative mb-8 transform hover:scale-105 transition-transform duration-300">
-          <div className="flex items-center justify-center space-x-6">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300" />
-              <Dumbbell 
-                className="w-16 h-16 text-blue-400 transform transition-transform duration-300 relative z-10"
-                style={{ transform: `rotate(${repCount * 36}deg)` }}
-              />
-              <div className="absolute inset-0 bg-blue-500/20 animate-ping rounded-full" />
+      <div className="relative bg-gray-800/90 rounded-2xl p-8 max-w-lg w-full mx-4 shadow-2xl border border-gray-700/50 backdrop-blur-xl">
+        {/* 3D Scene Container */}
+        <div className="w-full h-64 perspective-1000 mb-8">
+          <div className="relative w-full h-full">
+            {/* Center Dumbbell */}
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+              <div className="relative w-16 h-16 animate-pulse">
+                <Dumbbell className="w-16 h-16 text-blue-400" />
+                <div className="absolute inset-0 bg-blue-500/20 rounded-full animate-ping" />
+              </div>
             </div>
-            <div className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent animate-pulse">
-              {weightLoss}kg
+
+            {/* Orbiting Items */}
+            <div className="absolute top-1/2 left-1/2 transform-style-3d">
+              {orbitItems.map((item, index) => {
+                const angle = (index * (360 / orbitItems.length) + rotationAngle) * (Math.PI / 180);
+                const orbitRadius = item.radius;
+                const x = Math.cos(angle * item.speed) * orbitRadius;
+                const y = Math.sin(angle * item.speed) * orbitRadius;
+                const z = Math.sin(angle * item.speed) * 20; // Adds some depth variation
+
+                return (
+                  <div
+                    key={index}
+                    className="absolute transform-style-3d transition-transform duration-300"
+                    style={{
+                      transform: `translate3d(${x}px, ${y}px, ${z}px) scale(${1 + z/200})`,
+                      opacity: 0.8 + z/100
+                    }}
+                  >
+                    <div className="relative">
+                      <div className="text-4xl transform-style-3d animate-float">
+                        {item.icon}
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-xl -z-10" />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
 
-        {/* Current Achievement */}
-        <div className="mb-6 flex justify-center transform hover:scale-105 transition-transform duration-300">
-          <Achievement {...achievements[achievementIndex]} />
+        {/* Processing Steps */}
+        <div className="space-y-4">
+          {loadingSteps.map((step, index) => {
+            const isActive = index === progressStep;
+            const isCompleted = index < progressStep;
+            const Icon = step.icon;
+
+            return (
+              <div
+                key={index}
+                className={`transform transition-all duration-500 
+                  ${isActive ? 'scale-105' : 'scale-100'}
+                  ${isCompleted ? 'opacity-50' : 'opacity-100'}`}
+              >
+                <div className={`relative p-4 rounded-xl bg-gradient-to-r 
+                  ${isActive ? step.color : 'from-gray-700 to-gray-800'} 
+                  border border-gray-700/50`}
+                >
+                  <div className="flex items-start space-x-4">
+                    <div className="relative">
+                      <Icon className={`w-6 h-6 ${isActive ? 'text-white' : 'text-gray-400'}`} />
+                      {isActive && (
+                        <div className="absolute inset-0 bg-white/20 animate-ping rounded-full" />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className={`font-semibold ${isActive ? 'text-white' : 'text-gray-300'}`}>
+                        {step.title}
+                      </h3>
+                      <p className={`text-sm ${isActive ? 'text-white/80' : 'text-gray-400'}`}>
+                        {step.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Loading Message with Gradient Background */}
-        <div className="relative mb-6 p-4 rounded-xl bg-gradient-to-r from-gray-800/50 to-gray-700/50 border border-gray-600/30">
-          <p className="text-lg text-gray-300 text-center h-12 flex items-center justify-center font-medium">
-            {loadingMessages[messageIndex]}
-          </p>
-        </div>
-
-        {/* Enhanced Progress Bar */}
-        <div className="w-full h-3 bg-gray-700/50 rounded-full overflow-hidden mb-6 p-0.5">
+        {/* Progress Bar */}
+        <div className="relative h-2 bg-gray-700/50 rounded-full overflow-hidden mt-6">
           <div 
-            className="h-full rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 relative"
+            className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
             style={{ 
-              width: `${(repCount / maxReps) * 100}%`,
-              transition: 'width 1s ease-in-out'
+              width: `${(progressStep / maxSteps) * 100}%`,
+              transition: 'width 0.5s ease-out'
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent animate-pulse" />
           </div>
         </div>
-
-        {/* Animated Social Links */}
-        <div className="flex justify-center space-x-6 mb-6">
-          {[Brain, Heart, Trophy].map((Icon, index) => (
-            <div key={index} className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <Icon className={`w-8 h-8 ${index === 0 ? 'text-blue-400' : index === 1 ? 'text-red-400' : 'text-green-400'} transform transition-all duration-300 hover:scale-125 hover:rotate-12`} />
-            </div>
-          ))}
-        </div>
-
-        {/* Enhanced Fun Tips */}
-        <div className="space-y-3">
-          <div className="p-3 rounded-xl bg-gradient-to-r from-gray-800/50 to-gray-700/50 border border-gray-600/30 transform hover:scale-105 transition-transform duration-300">
-            <p className="text-sm text-gray-300 italic text-center">
-              "While this AI thinks, check out Aftab's Profile on LinkedIn and Connect! 🚀"
-            </p>
-          </div>
-          <div className="p-3 rounded-xl bg-gradient-to-r from-gray-800/50 to-gray-700/50 border border-gray-600/30 transform hover:scale-105 transition-transform duration-300">
-            <p className="text-sm text-gray-300 text-center">
-              P.S. Did you know? This diet plan is approved by a real doctor 
-              (Aftab's brother!) 👨‍⚕️
-            </p>
-          </div>
-        </div>
       </div>
+
+      <style jsx>{`
+        .perspective-1000 {
+          perspective: 1000px;
+        }
+        .transform-style-3d {
+          transform-style: preserve-3d;
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   );
 };

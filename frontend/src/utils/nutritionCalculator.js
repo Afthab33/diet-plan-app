@@ -1,6 +1,8 @@
 const supplementMacros = {
     whey: { calories: 120, protein: 25, carbs: 3, fats: 1 },
-    creatine: { calories: 0, protein: 0, carbs: 0, fats: 0 }
+    creatine: { calories: 0, protein: 0, carbs: 0, fats: 0 },
+    omega3: { calories: 20, protein: 0, carbs: 0, fats: 2 },
+    multivitamin: { calories: 0, protein: 0, carbs: 0, fats: 0 }
   };
   
   const activityMultipliers = {

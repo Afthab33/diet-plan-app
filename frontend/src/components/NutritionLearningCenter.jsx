@@ -90,7 +90,7 @@ const ProcessStep = ({
   </div>
 );
 
-const DataFlowGuide = ({ onClose }) => {
+const NutritionLearningCenter = ({ onClose }) => {
   const [activeStep, setActiveStep] = useState(1);
   const [isPlaying, setIsPlaying] = useState(true);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -333,4 +333,4 @@ Carbs = (total_calories - protein_calories - fat_calories) ÷ 4`}
   );
 };
 
-export default DataFlowGuide;
+export default NutritionLearningCenter;

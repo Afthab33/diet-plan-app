@@ -36,7 +36,6 @@ const BackButton = ({ onClick }) => (
 const DietPlanner = ({ onBack }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [dietPlan, setDietPlan] = useState(null);
   const [showResults, setShowResults] = useState(false);
@@ -599,22 +598,6 @@ const styles = `
     <div className="min-h-screen">
         <style>{styles}</style>
       <BackButton onClick={onBack} />
-
-      {loading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/80 backdrop-blur-sm">
-          <div className="text-center">
-            <div className="relative">
-              <div className="absolute inset-0 bg-blue-500/20 animate-ping rounded-full" />
-              <div className="relative animate-bounce">
-                <Dumbbell className="w-16 h-16 text-blue-500" />
-              </div>
-            </div>
-            <h3 className="mt-4 text-2xl font-bold text-white animate-pulse">
-              Crafting Your Perfect Diet Plan
-            </h3>
-          </div>
-        </div>
-      )}
 
       <div className="relative min-h-screen flex flex-col">
         <header className="py-8 text-center">

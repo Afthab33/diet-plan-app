@@ -49,6 +49,46 @@ const SupplementPlanSection = ({ supplements = [] }) => {
       ],
       icon: Package,
       color: "purple"
+    },
+    omega3: {
+      name: "Omega-3 Fish Oil",
+      timing: "With meals, any time of day",
+      dosage: "1-2 capsules (1,000-2,000mg)",
+      macros: {
+        calories: 20,
+        protein: 0,
+        carbs: 0,
+        fats: 2
+      },
+      benefits: "Supports heart, brain, and joint health",
+      tips: [
+        "Take with meals to improve absorption",
+        "Store in a cool, dark place",
+        "Can be taken morning or evening",
+        "Consider freezing capsules to prevent fishy taste"
+      ],
+      icon: Package,
+      color: "yellow"
+    },
+    multivitamin: {
+      name: "Multivitamin",
+      timing: "With breakfast or first meal",
+      dosage: "1 tablet daily",
+      macros: {
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fats: 0
+      },
+      benefits: "Fills nutritional gaps and supports overall health",
+      tips: [
+        "Take with food to improve absorption",
+        "Best absorbed when taken in the morning",
+        "Avoid taking with coffee or tea",
+        "Space out from other supplements"
+      ],
+      icon: Package,
+      color: "green"
     }
   };
 
