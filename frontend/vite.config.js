@@ -3,14 +3,29 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: "/",
   build: {
     outDir: "dist",
     assetsDir: "static",
-    manifest: true,
+    sourcemap: false,
     rollupOptions: {
-      input: "index.html",
+      output: {
+        manualChunks: {
+          vendor: [
+            'react',
+            'react-dom',
+            'react-router-dom',
+            'recharts'
+          ],
+          ui: [
+            '@radix-ui/react-slot',
+            'class-variance-authority',
+            'clsx',
+            'lucide-react'
+          ]
+        }
+      }
     },
+    chunkSizeWarningLimit: 1600
   },
   server: {
     proxy: {
