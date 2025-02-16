@@ -4,8 +4,6 @@ import {
   Utensils, Heart, Clock, Leaf, Scale, Activity,
   Code, Linkedin, Apple, Trophy, Target, ArrowDown
 } from 'lucide-react';
-import profileImage from '/Users/aftab/Projects/diet-app/frontend/src/assets/images/profileImage.jpg';
-import openAiLogo from '../assets/openai-logo.svg';
 
 const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -165,7 +163,7 @@ const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {
           <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur opacity-60 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse" />
             <img
-              src={profileImage}
+              src={"/images/profileImage.jpg"}
               alt="Aftab Hussain"
               className="relative w-12 h-12 rounded-full object-cover border-2 border-gray-700"
             />
@@ -211,7 +209,7 @@ const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {
         <div className="text-center relative z-10 max-w-7xl mx-auto" style={{ zIndex: 1 }}>
           
         <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 mb-8">
-          <img src={openAiLogo} alt="OpenAI Logo" className="w-6 h-6" />
+          <img src={"/images/openai-logo.svg"} alt="OpenAI Logo" className="w-6 h-6" />
           <span className="text-white/90 text-base font-medium ml-2">Powered by OpenAI</span>
         </div>
 
