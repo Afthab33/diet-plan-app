@@ -1,6 +1,7 @@
-import path from 'path'
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 export default defineConfig({
   plugins: [react()],
@@ -10,17 +11,17 @@ export default defineConfig({
     assetsDir: 'static',
     manifest: true,
   },
-  server: {
+  server: isDevelopment ? {
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
         changeOrigin: true,
       }
     }
-  },
+  } : {},
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": "/src",
     },
   },
-})
+});
