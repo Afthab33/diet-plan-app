@@ -1,24 +1,26 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-const isDevelopment = process.env.NODE_ENV === 'development';
-
 export default defineConfig({
   plugins: [react()],
   base: "/",
   build: {
-    outDir: 'dist',
-    assetsDir: 'static',
+    outDir: "dist",
+    assetsDir: "static",
     manifest: true,
+    rollupOptions: {
+      input: "index.html",
+    },
   },
-  server: isDevelopment ? {
+  server: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:8000',
+      "/api": {
+        target: "http://localhost:8000",
         changeOrigin: true,
-      }
-    }
-  } : {},
+        secure: false,
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": "/src",
