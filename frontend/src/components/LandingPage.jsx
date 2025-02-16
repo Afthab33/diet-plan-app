@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import profileImage from '/Users/aftab/Projects/diet-app/frontend/src/assets/images/profileImage.jpg';
 import { Link } from 'react-router-dom';
+import openAiLogo from '../assets/openai-logo.svg';
 
 const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -155,10 +156,11 @@ const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {
         }
       `}</style>
 
-      {/* Header */}
-      <header className="relative z-50">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="flex justify-between items-center py-6">
+  {/* Header */}
+  <header className="relative z-50">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col md:flex-row justify-between items-center py-6 space-y-4 md:space-y-0">
+
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-3">
           <div className="relative group">
@@ -208,19 +210,18 @@ const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {
       {/* Hero Section */}
       <div className="relative pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="text-center relative z-10 max-w-7xl mx-auto" style={{ zIndex: 1 }}>
-          {/* Smart Badge */}
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 backdrop-blur-md border border-blue-500/20 mb-8">
-            <Sparkles className="w-5 h-5 text-blue-400 mr-2" />
-            <span className="text-blue-400 font-medium">Smart Diet Planning</span>
-            <div className="w-2 h-2 rounded-full bg-blue-400 ml-3 animate-pulse" />
-          </div>
+          
+        <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 mb-8">
+          <img src={openAiLogo} alt="OpenAI Logo" className="w-6 h-6" />
+          <span className="text-white/90 text-base font-medium ml-2">Powered by OpenAI</span>
+        </div>
 
           {/* Ribbon Flow positioned behind the title */}
           <div className="absolute inset-0 -z-10 top-32">
             <RibbonFlow />
           </div>
 
-          <h1 className="text-5xl sm:text-7xl font-bold mb-8 leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-8 leading-tight">
             <span className="relative inline-block">
               <span className="relative z-10 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 AI-Driven
@@ -231,7 +232,7 @@ const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {
             <span className="text-white">Diet Planning</span>
           </h1>
 
-          <p className="max-w-2xl mx-auto text-xl text-gray-300 mb-12 leading-relaxed">
+          <p className="max-w-2xl mx-auto text-lg sm:text-xl text-gray-300 mb-8 sm:mb-12 leading-relaxed px-4">
             Transform your nutrition journey with our advanced meal planning system.
             Get personalized recommendations that adapt to your lifestyle.
           </p>
@@ -251,7 +252,7 @@ const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {
           </div>
 
           {/* Features */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 sm:mt-24 px-4">
             {features.map((feature, index) => (
               <div
                 key={feature.title}
@@ -297,6 +298,16 @@ const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {
 
   .animate-pulse-slow {
     animation: pulse-slow 4s ease-in-out infinite;
+  }
+
+  @media (max-width: 640px) {
+    .animate-pulse-slow {
+      animation: none;
+    }
+    
+    .food-emoji {
+      font-size: 3rem;
+    }
   }
 `}</style>
     </div>
