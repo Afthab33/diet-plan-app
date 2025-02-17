@@ -115,7 +115,7 @@ const LandingPage = ({ onGetStarted, onShowNutritionGuide }) => {
       {/* Static Food Icons */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
         {[
-          { emoji: '🥗', left: '10%', top: '20%', delay: '0s' },
+          { emoji: '🥗', left: '10%', top: '15%', delay: '0s' },
           { emoji: '🍲', left: '85%', top: '15%', delay: '0.3s' },
           { emoji: '🥑', left: '75%', top: '60%', delay: '0.6s' },
           { emoji: '🥪', left: '15%', top: '70%', delay: '0.9s' },
