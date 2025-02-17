@@ -7,6 +7,7 @@ import {
   Scale,
   Calculator
 } from 'lucide-react';
+import MealPlanLoadingState from './MealPlanLoadingState';
 
 const getFoodEmoji = (foodName) => {
   const foodEmojis = {
@@ -35,6 +36,9 @@ const getFoodEmoji = (foodName) => {
 };
 
 const MealPlanSection = ({ mealPlan = [] }) => {
+  if (!mealPlan) {
+    return <MealPlanLoadingState />;
+  }
   // Function to normalize meal plan data
   const normalizeMealPlan = (rawMealPlan) => {
     if (!rawMealPlan) return [];
