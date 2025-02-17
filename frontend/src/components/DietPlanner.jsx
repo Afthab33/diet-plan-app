@@ -45,6 +45,7 @@ const DietPlanner = ({ onBack }) => {
   const [heightUnit, setHeightUnit] = useState('ft');
   const [isDietPreferencesValid, setIsDietPreferencesValid] = useState(false);
   const [displayWeight, setDisplayWeight] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   
   const [fieldErrors, setFieldErrors] = useState({
     gender: '',
@@ -369,14 +370,7 @@ const ErrorDisplay = ({ error, onRetry, onBack }) => (
     if (!validateStep(currentStep)) return;
   
     try {
-      setProcessingStates({
-        calculatingMetrics: true,
-        generatingPlan: false,
-        optimizingMeals: false,
-        finalizingPlan: false
-      });
-  
-      // Calculating nutrition data with all details
+      // Calculate nutrition data
       const nutritionData = calculateNutrition({
         gender: formData.gender,
         age: Number(formData.age),
@@ -391,52 +385,49 @@ const ErrorDisplay = ({ error, onRetry, onBack }) => (
         supplements: formData.supplements
       });
   
-      setProcessingStates({
-        calculatingMetrics: false,
-        generatingPlan: true,
-        optimizingMeals: false,
-        finalizingPlan: false
-      });
-  
-      // Generating API payload
-      const apiPayload = generateApiPayload(nutritionData, formData);
-  
-      const API_URL = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${API_URL}/api/generate-diet/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(apiPayload)
-      });
-  
-      if (!response.ok) throw new Error('Failed to generate meal plan');
-  
-      const mealPlan = await response.json();
-  
-      // Creating complete diet plan with all calculation details
-      const completeDietPlan = {
-        ...mealPlan,
+      // Create initial diet plan with just the calculations
+      const initialDietPlan = {
         daily_summary: {
           calories: nutritionData.calories,
           protein: nutritionData.protein,
           carbs: nutritionData.carbs,
           fats: nutritionData.fats,
           macro_percentages: nutritionData.macroPercentages,
-          calculations: nutritionData.calculations 
-        }
+          calculations: nutritionData.calculations
+        },
+        meal_plan: null // This will trigger loading state in MealPlanSection
       };
   
-      setDietPlan(completeDietPlan);
+      // Show the diet plan display immediately with calculations
+      setDietPlan(initialDietPlan);
       setShowResults(true);
+  
+      // Make API call in background
+      try {
+        const apiPayload = generateApiPayload(nutritionData, formData);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/generate-diet/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(apiPayload)
+        });
+  
+        if (!response.ok) throw new Error('Failed to generate meal plan');
+        
+        const mealPlanData = await response.json();
+        
+        // Update diet plan with meal data
+        setDietPlan(prev => ({
+          ...prev,
+          meal_plan: mealPlanData.meal_plan
+        }));
+      } catch (error) {
+        console.error('API Error:', error);
+        // Don't set API error - let user continue viewing calculations
+        // Consider showing a non-intrusive error message for meal plan generation
+      }
   
     } catch (error) {
       setApiError(error.message);
-    } finally {
-      setProcessingStates({
-        calculatingMetrics: false,
-        generatingPlan: false,
-        optimizingMeals: false,
-        finalizingPlan: false
-      });
     }
   };
 
@@ -617,52 +608,33 @@ const styles = `
 
   return (
     <div className="min-h-screen">
-        <style>{styles}</style>
+      <style>{styles}</style>
       <BackButton onClick={onBack} />
-
-      <div className="relative min-h-screen flex flex-col">
-        <main className="flex-grow container mx-auto max-w-2xl px-4 py-8">
-          {error && (
-            <Alert className="mb-6 bg-red-900/50 border-red-500">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-          {renderCurrentStep()}
-        </main>
-
-        <footer className="py-6 text-center text-gray-500">
-          <div className="flex items-center justify-center space-x-2">
-            <Heart className="w-4 h-4" />
-            <span>Crafted with care for your health journey</span>
-          </div>
-        </footer>
-      </div>
-
-    {/* Processing Animation */}
-    {Object.values(processingStates).some(Boolean) && <WorkoutLoader />}
-
-      {/* Error Display */}
-      {apiError && (
-        <ErrorDisplay 
-          error={apiError}
-          onRetry={handleFinalSubmit}
-          onBack={() => {
-            setApiError(null);
-            setProcessingStates({
-              calculatingMetrics: false,
-              generatingPlan: false,
-              optimizingMeals: false,
-              finalizingPlan: false
-            });
-          }}
-        />
-      )}
-
-{/* Diet Plan Display */}
-{dietPlan && showResults && (
+  
+      {!showResults ? (
+        // Show form and footer when not showing results
+        <div className="relative min-h-screen flex flex-col">
+          <main className="flex-grow container mx-auto max-w-2xl px-4 py-8">
+            {error && (
+              <Alert className="mb-6 bg-red-900/50 border-red-500">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            {renderCurrentStep()}
+          </main>
+  
+          <footer className="py-6 text-center text-gray-500">
+            <div className="flex items-center justify-center space-x-2">
+              <Heart className="w-4 h-4" />
+              <span>Crafted with care for your health journey</span>
+            </div>
+          </footer>
+        </div>
+      ) : (
+        // Show diet plan when results are ready
         <div className="transition-all duration-500 ease-out">
           <DietPlanDisplay 
-            dietPlan={dietPlan} 
+            dietPlan={dietPlan}
             userInfo={formData}
             onReset={() => {
               setDietPlan(null);
@@ -684,11 +656,32 @@ const styles = `
                 allergies: []
               });
               setCurrentStep(0);
-            }} 
+            }}
           />
         </div>
       )}
-
+  
+      {/* Overlay Elements */}
+      {/* Show WorkoutLoader during processing */}
+      {Object.values(processingStates).some(Boolean) && <WorkoutLoader />}
+  
+      {/* Show Error Display when there's an API error */}
+      {apiError && (
+        <ErrorDisplay 
+          error={apiError}
+          onRetry={handleFinalSubmit}
+          onBack={() => {
+            setApiError(null);
+            setProcessingStates({
+              calculatingMetrics: false,
+              generatingPlan: false,
+              optimizingMeals: false,
+              finalizingPlan: false
+            });
+          }}
+        />
+      )}
+  
       <style>{`
         @keyframes gradient {
           0% { background-position: 0% 50%; }
