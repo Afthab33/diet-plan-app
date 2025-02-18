@@ -45,7 +45,7 @@ const DietPlanner = ({ onBack }) => {
   const [heightUnit, setHeightUnit] = useState('ft');
   const [isDietPreferencesValid, setIsDietPreferencesValid] = useState(false);
   const [displayWeight, setDisplayWeight] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingWorkout, setLoadingWorkout] = useState(false);
   
   const [fieldErrors, setFieldErrors] = useState({
     gender: '',
@@ -246,7 +246,7 @@ const DietPlanner = ({ onBack }) => {
   const validateActivityLevel = () => {
     const errors = {...fieldErrors};
     
-    if (currentStep === 1) { // Activity level is step 1
+    if (currentStep === 1) {
       if (!formData.activity_level) {
         errors.activity_level = 'Please select your activity level';
       }
@@ -370,7 +370,10 @@ const ErrorDisplay = ({ error, onRetry, onBack }) => (
     if (!validateStep(currentStep)) return;
   
     try {
-      // Calculate nutrition data
+      // Show the WorkoutLoader
+      setLoadingWorkout(true);
+
+      // Calculating nutrition data with all details
       const nutritionData = calculateNutrition({
         gender: formData.gender,
         age: Number(formData.age),
@@ -384,7 +387,7 @@ const ErrorDisplay = ({ error, onRetry, onBack }) => (
         foodRestrictions: formData.foodRestrictions,
         supplements: formData.supplements
       });
-  
+
       // Create initial diet plan with just the calculations
       const initialDietPlan = {
         daily_summary: {
@@ -395,38 +398,42 @@ const ErrorDisplay = ({ error, onRetry, onBack }) => (
           macro_percentages: nutritionData.macroPercentages,
           calculations: nutritionData.calculations
         },
-        meal_plan: null // This will trigger loading state in MealPlanSection
+        meal_plan: null
       };
-  
-      // Show the diet plan display immediately with calculations
+
+      // Set initial diet plan
       setDietPlan(initialDietPlan);
+
+      // Waiting for exactly 5 seconds
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      
+      setLoadingWorkout(false);
       setShowResults(true);
-  
-      // Make API call in background
+
       try {
         const apiPayload = generateApiPayload(nutritionData, formData);
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/generate-diet/`, {
+        const API_URL = import.meta.env.VITE_API_URL;
+        const response = await fetch(`${API_URL}/api/generate-diet/`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(apiPayload)
         });
-  
+
         if (!response.ok) throw new Error('Failed to generate meal plan');
-        
         const mealPlanData = await response.json();
-        
+
         // Update diet plan with meal data
         setDietPlan(prev => ({
           ...prev,
           meal_plan: mealPlanData.meal_plan
         }));
       } catch (error) {
-        console.error('API Error:', error);
-        // Don't set API error - let user continue viewing calculations
-        // Consider showing a non-intrusive error message for meal plan generation
+        setApiError(error.message);
       }
-  
+
     } catch (error) {
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      setLoadingWorkout(false);
       setApiError(error.message);
     }
   };
@@ -583,6 +590,7 @@ const styles = `
           onReset={() => {
             setDietPlan(null);
             setShowResults(false);
+            setShowLoader(false);
             setFormData({
               gender: '',
               age: '',
@@ -612,7 +620,6 @@ const styles = `
       <BackButton onClick={onBack} />
   
       {!showResults ? (
-        // Show form and footer when not showing results
         <div className="relative min-h-screen flex flex-col">
           <main className="flex-grow container mx-auto max-w-2xl px-4 py-8">
             {error && (
@@ -631,7 +638,6 @@ const styles = `
           </footer>
         </div>
       ) : (
-        // Show diet plan when results are ready
         <div className="transition-all duration-500 ease-out">
           <DietPlanDisplay 
             dietPlan={dietPlan}
@@ -661,9 +667,7 @@ const styles = `
         </div>
       )}
   
-      {/* Overlay Elements */}
-      {/* Show WorkoutLoader during processing */}
-      {Object.values(processingStates).some(Boolean) && <WorkoutLoader />}
+      {loadingWorkout && <WorkoutLoader />}
   
       {/* Show Error Display when there's an API error */}
       {apiError && (

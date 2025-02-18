@@ -4,13 +4,12 @@ import {
   Clock, Dumbbell
 } from 'lucide-react';
 
-const WorkoutLoader = () => {
+const WorkoutLoader = ({onComplete}) => {
   const [rotationAngle, setRotationAngle] = useState(0);
   const [progressStep, setProgressStep] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const maxSteps = 4;
 
-  // Detect mobile vs. desktop
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -20,7 +19,6 @@ const WorkoutLoader = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Items that orbit the center icon (for desktop only)
   const orbitItems = [
     { icon: '🥗', speed: 1 },
     { icon: '🍎', speed: 0.8 },
@@ -71,19 +69,24 @@ const WorkoutLoader = () => {
     const animationFrame = requestAnimationFrame(animate);
     const progressInterval = setInterval(() => {
       setProgressStep(prev => (prev + 1) % (maxSteps + 1));
-    }, 3000);
+    }, 1250);
+
+    const cleanup = setTimeout(() => {
+      if (onComplete) {
+        onComplete();
+      }
+    }, 5000);
 
     return () => {
       cancelAnimationFrame(animationFrame);
       clearInterval(progressInterval);
+      clearTimeout(cleanup);
     };
-  }, [animate]);
+  }, [animate, onComplete]);
 
-  // Orbit radius (desktop only); won't matter if hidden on mobile
   const getOrbitRadius = () => (isMobile ? 25 : 80);
 
   return (
-    // Fixed overlay so it sits on top of your page
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/90 backdrop-blur-lg">
 
       {/* Background Layers */}
@@ -147,7 +150,7 @@ const WorkoutLoader = () => {
           style={{
             backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
             backgroundSize: '20px 20px',
-            animation: 'grid-move 20s linear infinite'
+            animation: 'grid-move 5s linear infinite'
           }}
         />
 
@@ -264,7 +267,7 @@ const WorkoutLoader = () => {
           50% { transform: translateY(-5px); }
         }
         .animate-float {
-          animation: float 3s ease-in-out infinite;
+          animation: float 1.25s ease-in-out infinite;
         }
 
         @keyframes pulse-slow {
